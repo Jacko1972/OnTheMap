@@ -13,6 +13,8 @@
 		D7D185141FBA1E7E00B59497 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D7D185121FBA1E7E00B59497 /* Main.storyboard */; };
 		D7D185161FBA1E7E00B59497 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D7D185151FBA1E7E00B59497 /* Assets.xcassets */; };
 		D7D185191FBA1E7E00B59497 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D7D185171FBA1E7E00B59497 /* LaunchScreen.storyboard */; };
+		D7D185221FBA1EBF00B59497 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7D185211FBA1EBF00B59497 /* MapKit.framework */; };
+		D7D185241FBA1FDF00B59497 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D185231FBA1FDF00B59497 /* LoginViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +26,8 @@
 		D7D185151FBA1E7E00B59497 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D7D185181FBA1E7E00B59497 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D7D1851A1FBA1E7E00B59497 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D7D185211FBA1EBF00B59497 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		D7D185231FBA1FDF00B59497 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -31,6 +35,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D7D185221FBA1EBF00B59497 /* MapKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -42,6 +47,7 @@
 			children = (
 				D7D1850B1FBA1E7E00B59497 /* OnTheMap */,
 				D7D1850A1FBA1E7E00B59497 /* Products */,
+				D7D185201FBA1EBF00B59497 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -63,8 +69,17 @@
 				D7D185151FBA1E7E00B59497 /* Assets.xcassets */,
 				D7D185171FBA1E7E00B59497 /* LaunchScreen.storyboard */,
 				D7D1851A1FBA1E7E00B59497 /* Info.plist */,
+				D7D185231FBA1FDF00B59497 /* LoginViewController.swift */,
 			);
 			path = OnTheMap;
+			sourceTree = "<group>";
+		};
+		D7D185201FBA1EBF00B59497 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D7D185211FBA1EBF00B59497 /* MapKit.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -100,6 +115,11 @@
 					D7D185081FBA1E7E00B59497 = {
 						CreatedOnToolsVersion = 9.1;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.Maps.iOS = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -139,6 +159,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D7D185241FBA1FDF00B59497 /* LoginViewController.swift in Sources */,
 				D7D185111FBA1E7E00B59497 /* SecondViewController.swift in Sources */,
 				D7D1850D1FBA1E7E00B59497 /* AppDelegate.swift in Sources */,
 				D7D1850F1FBA1E7E00B59497 /* FirstViewController.swift in Sources */,
