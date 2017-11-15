@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		D790A3E01FBB1D3F004D4DF3 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D790A3DF1FBB1D3F004D4DF3 /* MapViewController.swift */; };
 		D790A3E21FBB1DA9004D4DF3 /* ListTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D790A3E11FBB1DA9004D4DF3 /* ListTableViewController.swift */; };
+		D790A3E41FBB6913004D4DF3 /* TabbedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D790A3E31FBB6913004D4DF3 /* TabbedViewController.swift */; };
+		D790A3E61FBB6A67004D4DF3 /* AddLocationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D790A3E51FBB6A67004D4DF3 /* AddLocationViewController.swift */; };
 		D7D1850D1FBA1E7E00B59497 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D1850C1FBA1E7E00B59497 /* AppDelegate.swift */; };
 		D7D185141FBA1E7E00B59497 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D7D185121FBA1E7E00B59497 /* Main.storyboard */; };
 		D7D185161FBA1E7E00B59497 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D7D185151FBA1E7E00B59497 /* Assets.xcassets */; };
@@ -21,6 +23,8 @@
 /* Begin PBXFileReference section */
 		D790A3DF1FBB1D3F004D4DF3 /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		D790A3E11FBB1DA9004D4DF3 /* ListTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListTableViewController.swift; sourceTree = "<group>"; };
+		D790A3E31FBB6913004D4DF3 /* TabbedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabbedViewController.swift; sourceTree = "<group>"; };
+		D790A3E51FBB6A67004D4DF3 /* AddLocationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddLocationViewController.swift; sourceTree = "<group>"; };
 		D7D185091FBA1E7E00B59497 /* OnTheMap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OnTheMap.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D7D1850C1FBA1E7E00B59497 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D7D185131FBA1E7E00B59497 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -73,6 +77,8 @@
 				D7D185251FBA56BA00B59497 /* StudentInformation.swift */,
 				D790A3DF1FBB1D3F004D4DF3 /* MapViewController.swift */,
 				D790A3E11FBB1DA9004D4DF3 /* ListTableViewController.swift */,
+				D790A3E31FBB6913004D4DF3 /* TabbedViewController.swift */,
+				D790A3E51FBB6A67004D4DF3 /* AddLocationViewController.swift */,
 			);
 			path = OnTheMap;
 			sourceTree = "<group>";
@@ -164,6 +170,8 @@
 			files = (
 				D7D185241FBA1FDF00B59497 /* LoginViewController.swift in Sources */,
 				D7D1850D1FBA1E7E00B59497 /* AppDelegate.swift in Sources */,
+				D790A3E41FBB6913004D4DF3 /* TabbedViewController.swift in Sources */,
+				D790A3E61FBB6A67004D4DF3 /* AddLocationViewController.swift in Sources */,
 				D7D185261FBA56BA00B59497 /* StudentInformation.swift in Sources */,
 				D790A3E21FBB1DA9004D4DF3 /* ListTableViewController.swift in Sources */,
 				D790A3E01FBB1D3F004D4DF3 /* MapViewController.swift in Sources */,
