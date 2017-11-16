@@ -94,34 +94,29 @@ class LoginViewController: UIViewController {
     
     @objc func keyboardWillShow(_ notification: Notification) {
         keyBoardHeight = getKeyboardHeight(notification)
-        print("kWS \(keyBoardHeight)")
         moveKeyboard()
     }
     
     func moveKeyboard() {
-        print("mK \(keyBoardHeight)")
         
-        var viewFrame: CGRect = self.view.frame
-        var activeField: CGPoint = activeTextField.frame.origin
-        activeField.y += activeTextField.frame.size.height
-        viewFrame.size.height -= keyBoardHeight
-        print("frame \(activeField)")
-        print("view \(viewFrame)")
-        if !viewFrame.contains(activeField) {
-            var distance = activeField.y - viewFrame.height
-            distance += activeTextField.frame.size.height
-            view.frame.origin.y = -distance
+        var viewFrame: CGRect = self.view.frame // Window Frame
+        var activeField: CGPoint = activeTextField.frame.origin // Active Text Field origin
+        activeField.y += activeTextField.frame.size.height // Move point to bottom of Active Text Field
+        viewFrame.size.height -= keyBoardHeight // Remove Keyboard portion of Window Frame
+
+        if !viewFrame.contains(activeField) { // Is the Active Text Field bottom left point now outside Window Frame
+            var distance = activeField.y - viewFrame.height // Set distance Active Text Field is below Keyboard
+            distance += activeTextField.frame.size.height // Add height of text field to give a gap, not required to be textfield height
+            view.frame.origin.y = -distance // Move Window Frame up so Active Field is just above keyboard
         }
     }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
         activeTextField = textField
-        print("tFDBE \(keyBoardHeight)")
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         activeTextField = nil
-        print("tFDEE \(keyBoardHeight)")
     }
     
     @objc func keyboardWillHide(_ notification: Notification) {

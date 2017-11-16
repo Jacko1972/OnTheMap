@@ -17,7 +17,7 @@
 		D7D185191FBA1E7E00B59497 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D7D185171FBA1E7E00B59497 /* LaunchScreen.storyboard */; };
 		D7D185221FBA1EBF00B59497 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7D185211FBA1EBF00B59497 /* MapKit.framework */; };
 		D7D185241FBA1FDF00B59497 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D185231FBA1FDF00B59497 /* LoginViewController.swift */; };
-		D7D185261FBA56BA00B59497 /* StudentInformation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D185251FBA56BA00B59497 /* StudentInformation.swift */; };
+		D7D185261FBA56BA00B59497 /* DataStructures.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D185251FBA56BA00B59497 /* DataStructures.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,7 +33,7 @@
 		D7D1851A1FBA1E7E00B59497 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D7D185211FBA1EBF00B59497 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		D7D185231FBA1FDF00B59497 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
-		D7D185251FBA56BA00B59497 /* StudentInformation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentInformation.swift; sourceTree = "<group>"; };
+		D7D185251FBA56BA00B59497 /* DataStructures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStructures.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,7 +74,7 @@
 				D7D185171FBA1E7E00B59497 /* LaunchScreen.storyboard */,
 				D7D1851A1FBA1E7E00B59497 /* Info.plist */,
 				D7D185231FBA1FDF00B59497 /* LoginViewController.swift */,
-				D7D185251FBA56BA00B59497 /* StudentInformation.swift */,
+				D7D185251FBA56BA00B59497 /* DataStructures.swift */,
 				D790A3DF1FBB1D3F004D4DF3 /* MapViewController.swift */,
 				D790A3E11FBB1DA9004D4DF3 /* ListTableViewController.swift */,
 				D790A3E31FBB6913004D4DF3 /* TabbedViewController.swift */,
@@ -172,7 +172,7 @@
 				D7D1850D1FBA1E7E00B59497 /* AppDelegate.swift in Sources */,
 				D790A3E41FBB6913004D4DF3 /* TabbedViewController.swift in Sources */,
 				D790A3E61FBB6A67004D4DF3 /* AddLocationViewController.swift in Sources */,
-				D7D185261FBA56BA00B59497 /* StudentInformation.swift in Sources */,
+				D7D185261FBA56BA00B59497 /* DataStructures.swift in Sources */,
 				D790A3E21FBB1DA9004D4DF3 /* ListTableViewController.swift in Sources */,
 				D790A3E01FBB1D3F004D4DF3 /* MapViewController.swift in Sources */,
 			);
