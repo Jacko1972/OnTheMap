@@ -17,53 +17,26 @@ class LoginViewController: UIViewController {
     @IBOutlet var password: UITextField!
     
     @IBAction func loginUser(_ sender: UIButton) {
-        var request = URLRequest(url: URL(string: "https://www.udacity.com/api/session")!)
-        request.httpMethod = "POST"
-        request.addValue("application/json", forHTTPHeaderField: "Accept")
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = "{\"udacity\": {\"username\": \"\(username.text!)\", \"password\": \"\(password.text!)\"}}".data(using: .utf8)
-        let session = URLSession.shared
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
-        let task = session.dataTask(with: request) { data, response, error in
+        guard let user = username.text else {
+            print("error")
+            return
+        }
+        guard let pass = password.text else {
+            print("error")
+            return
+        }
+        OnTheMapClient.sharedInstance().authenticateWithUdacityApi(user, password: pass) { (success, error) in
             DispatchQueue.main.async {
                 UIApplication.shared.isNetworkActivityIndicatorVisible = false
-            }
-            if error != nil { // Handle error…
-                return
-            }
-            guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
-                print("error")
-                return
-            }
-            guard let data = data else {
-                print("error")
-                return
-            }
-            let range = Range(5..<data.count)
-            let newData = data.subdata(in: range) /* subset response data! */
-            print(String(data: newData, encoding: .utf8)!)
-            let parsedResults: [String:AnyObject]!
-            do {
-                parsedResults = try JSONSerialization.jsonObject(with: newData, options: .allowFragments) as! [String:AnyObject]
-            } catch {
-                print("error")
-                return
-            }
-            guard let account = parsedResults["account"] as? [String:AnyObject] else {
-                print("error")
-                return
-            }
-            guard let registered = account["registered"] as? Bool else {
-                print("error")
-                return
-            }
-            if registered {
-                DispatchQueue.main.async {
+                if success {
                     self.performSegue(withIdentifier: "LoggedInSegue", sender: self)
+                } else {
+                    print("error: \(String(describing: error?.domain)) \(String(describing: error?.localizedDescription))")
                 }
             }
         }
-        task.resume()
+
     }
     @IBAction func signUp(_ sender: UIButton) {
         if let url = URL(string: "https://www.udacity.com/account/auth#!/signup") {

@@ -8,18 +8,22 @@
 
 import UIKit
 
+struct StudentLocations: Decodable {
+    let results: [StudentInformation]
+}
+
 struct StudentInformation:  Decodable {
     
-    let createdAt: Date
-    let firstName: String
-    let lastName: String
-    let latitude: Float
-    let longitude: Float
-    let mapString: String
-    let mediaURL: String
-    let objectId: String
-    let uniqueKey: String
-    let updatedAt: Date
+    let createdAt: String?
+    let firstName: String?
+    let lastName: String?
+    let latitude: Double?
+    let longitude: Double?
+    let mapString: String?
+    let mediaURL: String?
+    let objectId: String?
+    let uniqueKey: String?
+    let updatedAt: String?
 }
 
 struct PostSession: Decodable {
@@ -30,7 +34,7 @@ struct PostSession: Decodable {
 struct Session: Decodable {
 
     let id: String // Session ID
-    let expiration: Date // Session Expiry Date
+    let expiration: String // Session Expiry Date
 }
 
 struct Account: Decodable {
