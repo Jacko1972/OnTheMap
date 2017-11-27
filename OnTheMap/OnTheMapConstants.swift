@@ -14,7 +14,9 @@ extension OnTheMapClient {
         static let sessionUrl = "https://www.udacity.com/api/session"
         static let signUpUrl = "https://www.udacity.com/account/auth#!/signup"
         static let studentLocation = "https://parse.udacity.com/parse/classes/StudentLocation"
-        static let orderUpdatedAtDesc = "?order=-updatedAt"
+        static let studentLocationLimit = "limit="
+        static let studentLocationOrder = "order="
+        static let studentLocationDefault = "\(studentLocation)?\(studentLocationLimit)100&\(studentLocationOrder)-updatedAt"
     }
     
 }

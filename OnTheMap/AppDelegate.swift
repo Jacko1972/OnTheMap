@@ -16,23 +16,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // App Icon <a href='https://www.freepik.com/free-vector/map-pin-in-a-map_714013.htm'>Designed by Freepik</a>
     
     var postSession: PostSession? = nil
-    var studentLocations: [StudentInformation] = [StudentInformation]() {
-        didSet {
-            if studentLocations.count > 0 {
-                let q = DispatchQueue.global(qos: .userInteractive)
-                q.async {
-                    let tempArray = self.studentLocations
-                    self.studentLocations.removeAll()
-                    for record: StudentInformation in tempArray {
-                        if OnTheMapClient.sharedInstance().isCompleteStudentInformation(record: record) {
-                            self.studentLocations.append(record)
-                        }
-                    }
-                    NotificationCenter.default.post(name: Notification.Name("StudentLocationsDownloaded"), object: nil)
-                }
-            }
-        }
-    }
+    var studentLocations: [StudentInformation] = [StudentInformation]()
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.

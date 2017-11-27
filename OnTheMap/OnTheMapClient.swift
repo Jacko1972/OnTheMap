@@ -55,7 +55,7 @@ class OnTheMapClient: NSObject {
     }
     
     func downloadStudentInformation(completionHandlerForInfo: @escaping (_ success: Bool, _ error: NSError?) -> Void) {
-        var request = URLRequest(url: URL(string: Constants.studentLocation)!)
+        var request = URLRequest(url: URL(string: Constants.studentLocationDefault)!)
         request.addValue("QrX47CA9cyuGewLdsL7o5Eb8iug6Em8ye0dnAbIr", forHTTPHeaderField: "X-Parse-Application-Id")
         request.addValue("QuWThTdiRmTux3YaDseUSEpUKo7aBYM737yKd4gY", forHTTPHeaderField: "X-Parse-REST-API-Key")
         let session = URLSession.shared
@@ -77,12 +77,18 @@ class OnTheMapClient: NSObject {
                 sendError("No Data from Request")
                 return
             }
-            print(String(data: data, encoding: .utf8)!)
             do {
                 let studentInfoResponse = try JSONDecoder().decode(StudentLocations.self, from: data)
+                var tempArray = [StudentInformation]()
+                for record: StudentInformation in studentInfoResponse.results {
+                    if OnTheMapClient.sharedInstance().isCompleteStudentInformation(record: record) {
+                        tempArray.append(record)
+                    }
+                }
                 DispatchQueue.main.async {
                     let appDelegate = UIApplication.shared.delegate as! AppDelegate
-                    appDelegate.studentLocations = studentInfoResponse.results
+                    appDelegate.studentLocations = tempArray
+                    NotificationCenter.default.post(name: Notification.Name("StudentLocationsDownloaded"), object: nil)
                 }
                 completionHandlerForInfo(true, nil)
             } catch {
@@ -95,6 +101,9 @@ class OnTheMapClient: NSObject {
     func isCompleteStudentInformation(record: StudentInformation) -> Bool {
         if record.firstName == nil || record.lastName == nil || record.latitude == nil || record.longitude == nil || record.mediaURL == nil {
             return false // Important information is missing
+        }
+        if !record.mediaURL!.isValidURL() {
+            return false // URL cannot be opened
         }
         return true // All info in record
     }
@@ -119,5 +128,21 @@ class OnTheMapClient: NSObject {
             static let instance = OnTheMapClient()
         }
         return Singleton.instance
+    }
+}
+
+extension String {
+    
+    func isValidURL() -> Bool {
+        guard let url = URLComponents.init(string: self) else {
+            return false
+        }
+        guard url.host != nil, url.url != nil else {
+            return false
+        }
+        if (url.host?.isEmpty)! {
+            return false
+        }
+        return true
     }
 }
