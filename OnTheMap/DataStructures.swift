@@ -24,6 +24,10 @@ struct StudentInformation:  Decodable {
     let objectId: String?
     let uniqueKey: String?
     let updatedAt: String?
+    
+    func getFullName() -> String {
+        return firstName! + " " + lastName!
+    }
 }
 
 struct PostSession: Decodable {

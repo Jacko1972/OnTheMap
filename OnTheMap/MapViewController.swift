@@ -17,22 +17,17 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     var pointAnnotations = [MKPointAnnotation]()
     
     func checkLocationAuthorizationStatus() {
-        print("checkStatus")
         if CLLocationManager.authorizationStatus() == .authorizedWhenInUse {
-            print("authorised")
             mapView.showsUserLocation = true
             if appDelegate.studentLocations.count > 0 {
-                print("count: \(appDelegate.studentLocations.count)")
                 loadAnnotations()
             }
         } else {
-            print("requestMade")
             locationManager.requestWhenInUseAuthorization()
         }
     }
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        print("statusUpdated")
         if status == CLAuthorizationStatus.authorizedWhenInUse {
             if appDelegate.studentLocations.count > 0 {
                 loadAnnotations()
@@ -44,7 +39,6 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         super.viewDidLoad()
         mapView.delegate = self
         navigationItem.title = "On The Map"
-        // Do any additional setup after loading the view.
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -54,14 +48,12 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     }
     
     @objc func loadAnnotations() {
-        
-        print("loadAnnotations count: \(appDelegate.studentLocations.count)")
         if appDelegate.studentLocations.count > 0 {
             for record in appDelegate.studentLocations {
                 let location = CLLocationCoordinate2D(latitude: record.latitude!, longitude: record.longitude!)
                 let annotation = MKPointAnnotation()
                 annotation.coordinate = location
-                annotation.title = record.firstName! + " " + record.lastName!
+                annotation.title = record.getFullName() // record.firstName! + " " + record.lastName!
                 annotation.subtitle = record.mediaURL
                 pointAnnotations.append(annotation)
             }

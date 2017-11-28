@@ -61,7 +61,6 @@ class OnTheMapClient: NSObject {
         let session = URLSession.shared
         let task = session.dataTask(with: request) { data, response, error in
             func sendError(_ error: String) {
-                print(error)
                 let userInfo = [NSLocalizedDescriptionKey : error]
                 completionHandlerForInfo(false, NSError(domain: "downloadStudentInformation", code: 1, userInfo: userInfo))
             }

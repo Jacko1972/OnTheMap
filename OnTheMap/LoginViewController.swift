@@ -47,7 +47,6 @@ class LoginViewController: UIViewController {
         super.viewDidLoad()
         username.delegate = self
         password.delegate = self
-        // Do any additional setup after loading the view.
     }
     
     override func viewWillAppear(_ animated: Bool) {
