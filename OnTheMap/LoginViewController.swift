@@ -13,26 +13,28 @@ class LoginViewController: UIViewController {
     var keyBoardHeight: CGFloat = 0
     var activeTextField: UITextField!
     
+    @IBOutlet var loginButton: UIButton!
     @IBOutlet var username: UITextField!
     @IBOutlet var password: UITextField!
     
     @IBAction func loginUser(_ sender: UIButton) {
+        guard let user = username.text, !user.isEmpty, user.isValidEmail else {
+            displayAlert(title: "Missing Username", msg: "Ensure you have entered your Username correctly!")
+            return
+        }
+        guard let pass = password.text, !pass.isEmpty else {
+            displayAlert(title: "Missing Password", msg: "Ensure you have entered your Password correctly!")
+            return
+        }
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
-        guard let user = username.text else {
-            print("error")
-            return
-        }
-        guard let pass = password.text else {
-            print("error")
-            return
-        }
         OnTheMapClient.sharedInstance().authenticateWithUdacityApi(user, password: pass) { (success, error) in
             DispatchQueue.main.async {
                 UIApplication.shared.isNetworkActivityIndicatorVisible = false
                 if success {
                     self.performSegue(withIdentifier: "LoggedInSegue", sender: self)
                 } else {
-                    print("error: \(String(describing: error?.domain)) \(String(describing: error?.localizedDescription))")
+                    self.displayAlert(title: "User Login Failed",
+                                      msg: "Domain: \(String(describing: error!.domain)). The system returned the following error: \(String(describing: error!.localizedDescription))")
                 }
             }
         }
@@ -47,6 +49,24 @@ class LoginViewController: UIViewController {
         super.viewDidLoad()
         username.delegate = self
         password.delegate = self
+        NotificationCenter.default.addObserver(self, selector: #selector(networkStatusChanged(_:)), name: NSNotification.Name(rawValue: ReachabilityStatusChangedNotification), object: nil)
+        Reach().monitorReachabilityChanges()
+        loginButton.setTitle("LOGIN", for: .normal)
+        loginButton.setTitle("No Internet", for: .disabled)
+    }
+    
+    @objc func networkStatusChanged(_ notification: Notification) {
+        let status = Reach().connectionStatus()
+        switch status {
+        case .offline, .unknown:
+            updateUiToAllowInternetActions(false)
+        default:
+            updateUiToAllowInternetActions(true)
+        }
+    }
+    
+    func updateUiToAllowInternetActions(_ available: Bool) -> Void {
+        loginButton.isEnabled = available
     }
     
     override func viewWillAppear(_ animated: Bool) {

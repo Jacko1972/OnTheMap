@@ -94,7 +94,6 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     
     func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
         guard let onTheMapPin = view.annotation as? MKPointAnnotation else {
-            print("error")
             return
         }
         UIApplication.shared.open(URL(string: onTheMapPin.subtitle!)!, options: [:], completionHandler: nil)

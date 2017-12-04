@@ -36,7 +36,7 @@ struct PostSession: Decodable {
     let session: Session
 }
 struct Session: Decodable {
-
+    
     let id: String // Session ID
     let expiration: String // Session Expiry Date
 }

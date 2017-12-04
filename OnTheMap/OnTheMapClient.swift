@@ -22,18 +22,18 @@ class OnTheMapClient: NSObject {
             func sendError(_ error: String) {
                 print(error)
                 let userInfo = [NSLocalizedDescriptionKey : error]
-                completionHandlerForAuth(false, NSError(domain: "authenticateWithUdacityApi", code: 1, userInfo: userInfo))
+                completionHandlerForAuth(false, NSError(domain: "Authenticate With Udacity Api", code: 1, userInfo: userInfo))
             }
             if error != nil {
-                sendError("An error was reported: \(String(describing: error?.localizedDescription))")
+                sendError("An error was reported: \(String(describing: error!.localizedDescription))")
             }
             guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
                 let code = (response as? HTTPURLResponse)?.statusCode
-                sendError("Status Code Error: \(String(describing: code))")
+                sendError("Status Code Error: \(String(describing: code!))")
                 return
             }
             guard let data = data else {
-                sendError("No Data from Request")
+                sendError("No Data from Authentication Request")
                 return
             }
             let range = Range(5..<data.count)
@@ -62,18 +62,19 @@ class OnTheMapClient: NSObject {
         let task = session.dataTask(with: request) { data, response, error in
             func sendError(_ error: String) {
                 let userInfo = [NSLocalizedDescriptionKey : error]
-                completionHandlerForInfo(false, NSError(domain: "downloadStudentInformation", code: 1, userInfo: userInfo))
+                completionHandlerForInfo(false, NSError(domain: "Download Student Information", code: 1, userInfo: userInfo))
             }
             if error != nil { // Handle error...
-                sendError("Error returned from Session")
+                sendError("Error returned from Information Session")
+                return
             }
             guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
                 let code = (response as? HTTPURLResponse)?.statusCode
-                sendError("Status Code Error: \(String(describing: code))")
+                sendError("Status Code Error: \(String(describing: code!))")
                 return
             }
             guard let data = data else {
-                sendError("No Data from Request")
+                sendError("No Data from Student Information Request")
                 return
             }
             do {
@@ -91,7 +92,7 @@ class OnTheMapClient: NSObject {
                 }
                 completionHandlerForInfo(true, nil)
             } catch {
-                sendError("Unable to Decode JSON from Request: \(error)")
+                sendError("Unable to Decode JSON from Info Request: \(error)")
             }
         }
         task.resume()

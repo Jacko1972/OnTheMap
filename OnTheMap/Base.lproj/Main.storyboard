@@ -124,6 +124,7 @@
                         <barButtonItem key="leftBarButtonItem" title="Item" id="Ary-Rs-IpW"/>
                     </navigationItem>
                     <connections>
+                        <outlet property="loginButton" destination="s8r-pG-2QI" id="7PG-DX-zMU"/>
                         <outlet property="password" destination="LPJ-wJ-XTH" id="ZpJ-nZ-4HR"/>
                         <outlet property="username" destination="kpJ-Pk-5WD" id="mm3-9o-aBg"/>
                         <segue destination="HSQ-oo-og8" kind="show" identifier="LoggedInSegue" id="zRD-D4-K9Y"/>

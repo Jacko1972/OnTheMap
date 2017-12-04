@@ -26,7 +26,8 @@ class TabbedViewController: UITabBarController {
             DispatchQueue.main.async {
                 UIApplication.shared.isNetworkActivityIndicatorVisible = false
                 if !success {
-                    print("error: \(String(describing: error?.domain)) \(String(describing: error?.localizedDescription))")
+                    self.displayAlert(title: "Information Download Error",
+                                      msg: "Domain: \(String(describing: error!.domain)). The system returned the following error: \(String(describing: error!.localizedDescription))")
                 }
             }
         }
