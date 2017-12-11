@@ -57,6 +57,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
                 annotation.subtitle = record.mediaURL
                 pointAnnotations.append(annotation)
             }
+        } else {
+            displayAlert(title: "No Data", msg: "No Locations to display!")
         }
         if pointAnnotations.count > 0 {
             mapView.addAnnotations(pointAnnotations)

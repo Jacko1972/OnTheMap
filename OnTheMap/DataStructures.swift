@@ -46,3 +46,27 @@ struct Account: Decodable {
     let registered: Bool // Is user registered
     let key: String // User key
 }
+
+struct UniqueKeyJson: Codable {
+    var uniqueKey: String
+}
+
+struct PublicUserJson: Codable {
+    let user: PublicUserData
+}
+
+struct PublicUserData: Codable {
+    let first_name: String?
+    let last_name: String?
+    let key: String?
+}
+
+struct CompletedPostOfUserLocationResponse: Decodable {
+    let createdAt: String?
+    let objectId: String?
+}
+struct CompletedPutOfUserLocationResponse: Decodable {
+    let updatedAt: String?
+}
+
+

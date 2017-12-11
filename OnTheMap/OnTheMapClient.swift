@@ -7,8 +7,13 @@
 //
 import UIKit
 import Foundation
+import CoreLocation
+import MapKit
+
 
 class OnTheMapClient: NSObject {
+    
+    var appDelegate: AppDelegate! = UIApplication.shared.delegate as? AppDelegate
     
     func authenticateWithUdacityApi(_ username: String, password: String, completionHandlerForAuth: @escaping (_ success: Bool, _ error: NSError?) -> Void) {
         var request = URLRequest(url: URL(string: Constants.sessionUrl)!)
@@ -26,6 +31,7 @@ class OnTheMapClient: NSObject {
             }
             if error != nil {
                 sendError("An error was reported: \(String(describing: error!.localizedDescription))")
+                return
             }
             guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
                 let code = (response as? HTTPURLResponse)?.statusCode
@@ -44,6 +50,8 @@ class OnTheMapClient: NSObject {
                     DispatchQueue.main.async {
                         let appDelegate = UIApplication.shared.delegate as! AppDelegate
                         appDelegate.postSession = authResponse
+                        self.checkForLocationOnUdacityAPI()
+                        self.getUserPublicData()
                     }
                     completionHandlerForAuth(true, nil)
                 }
@@ -128,6 +136,172 @@ class OnTheMapClient: NSObject {
             static let instance = OnTheMapClient()
         }
         return Singleton.instance
+    }
+    
+    func getLocalSearchLocationFromString(_ stringName: String, completionHandler: @escaping (_ mapItems: MKLocalSearchResponse?, _ error: Error?) -> Void) {
+        let request  = MKLocalSearchRequest()
+        request.naturalLanguageQuery = stringName
+        let localSearch = MKLocalSearch(request: request)
+        localSearch.start() { mapItems, error in
+            completionHandler(mapItems, error)
+        }
+    }
+    
+    func sendInformationToUdacityApi(_ mapItem: MKMapItem, _ link: String, handler: @escaping (_ response: Bool, _ error: Error?) -> Void) {
+        guard let key = appDelegate.postSession?.account.key else {
+            handler(false, NSError(domain: "Missing Unique Key", code: 1, userInfo: nil))
+            return
+        }
+        guard let student = appDelegate.studentPublicInformation else {
+            handler(false, NSError(domain: "Missing Public Information Object", code: 1, userInfo: nil))
+            return
+        }
+        if appDelegate.hasExistingLocationStored {
+            let object = appDelegate.studentInformationObject!
+            let urlString = Constants.studentLocation + "/" + object.objectId!
+            let url = URL(string: urlString)
+            var request = URLRequest(url: url!)
+            request.httpMethod = "PUT"
+            request.addValue("QrX47CA9cyuGewLdsL7o5Eb8iug6Em8ye0dnAbIr", forHTTPHeaderField: "X-Parse-Application-Id")
+            request.addValue("QuWThTdiRmTux3YaDseUSEpUKo7aBYM737yKd4gY", forHTTPHeaderField: "X-Parse-REST-API-Key")
+            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.httpBody = "{\"uniqueKey\": \"\(key)\", \"firstName\": \"\(student.first_name)\", \"lastName\": \"\(student.last_name)\",\"mapString\": \"\(mapItem.name)\", \"mediaURL\": \"\(link)\",\"latitude\": \(mapItem.placemark.coordinate.latitude), \"longitude\": \(mapItem.placemark.coordinate.longitude)}".data(using: .utf8)
+            let session = URLSession.shared
+            let task = session.dataTask(with: request) { data, response, error in
+                if error != nil { // Handle error…
+                    handler(false, NSError(domain: "Error on PUT method", code: 1, userInfo: nil))
+                }
+                print(String(data: data!, encoding: .utf8)!)
+                guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
+                    let code = (response as? HTTPURLResponse)?.statusCode
+                    handler(false, NSError(domain: "Status Code Error: \(String(describing: code!))", code: 1, userInfo: nil))
+                    return
+                }
+                guard let data = data else {
+                    handler(false, NSError(domain: "No Data from Student Information PUT Request", code: 1, userInfo: nil))
+                    return
+                }
+                do {
+                    let putResponse = try JSONDecoder().decode(CompletedPutOfUserLocationResponse.self, from: data)
+                    if putResponse.updatedAt != nil {
+                        handler(true, nil)
+                    } else {
+                        handler(false, NSError(domain: "No Updated At date provided", code: 1, userInfo: nil))
+                    }
+                } catch {
+                    handler(false, NSError(domain: "JSON Parse of POST request failed", code: 1, userInfo: nil))
+                    return
+                }
+            }
+            task.resume()
+        } else {
+            var request = URLRequest(url: URL(string: Constants.studentLocation)!)
+            request.httpMethod = "POST"
+            request.addValue("QrX47CA9cyuGewLdsL7o5Eb8iug6Em8ye0dnAbIr", forHTTPHeaderField: "X-Parse-Application-Id")
+            request.addValue("QuWThTdiRmTux3YaDseUSEpUKo7aBYM737yKd4gY", forHTTPHeaderField: "X-Parse-REST-API-Key")
+            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.httpBody = "{\"uniqueKey\": \"\(key)\", \"firstName\": \"\(student.first_name)\", \"lastName\": \"\(student.last_name)\",\"mapString\": \"\(mapItem.name)\", \"mediaURL\": \"\(link)\",\"latitude\": \(mapItem.placemark.coordinate.latitude), \"longitude\": \(mapItem.placemark.coordinate.longitude)}".data(using: .utf8)
+            let session = URLSession.shared
+            let task = session.dataTask(with: request) { data, response, error in
+                if error != nil { // Handle error…
+                    handler(false,NSError(domain: "Error on POST method", code: 1, userInfo: nil))
+                }
+                print(String(data: data!, encoding: .utf8)!)
+                guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
+                    let code = (response as? HTTPURLResponse)?.statusCode
+                    handler(false, NSError(domain: "Status Code Error: \(String(describing: code!))", code: 1, userInfo: nil))
+                    return
+                }
+                guard let data = data else {
+                    handler(false, NSError(domain: "No Data from Student Information POST Request", code: 1, userInfo: nil))
+                    return
+                }
+                do {
+                    let postResponse = try JSONDecoder().decode(CompletedPostOfUserLocationResponse.self, from: data)
+                    if postResponse.createdAt != nil {
+                        handler(true, nil)
+                    } else {
+                        handler(false, NSError(domain: "No Created At date provided", code: 1, userInfo: nil))
+                    }
+                } catch {
+                    handler(false, NSError(domain: "JSON Parse of POST request failed", code: 1, userInfo: nil))
+                    return
+                }
+            }
+            task.resume()
+        }
+    }
+    
+    func checkForLocationOnUdacityAPI() {
+        guard let key = appDelegate.postSession?.account.key else {
+            return
+        }
+        let jsonEncoder = JSONEncoder()
+        var uniqueKey: String = ""
+        do {
+            let json = try jsonEncoder.encode(UniqueKeyJson(uniqueKey: key))
+            uniqueKey = String(data: json, encoding: .utf8)!
+            uniqueKey = uniqueKey.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
+        } catch {
+            return
+        }
+        let urlString = Constants.loggedInStudentLocation + uniqueKey
+        let url = URL(string: urlString)
+        var request = URLRequest(url: url!)
+        request.addValue("QrX47CA9cyuGewLdsL7o5Eb8iug6Em8ye0dnAbIr", forHTTPHeaderField: "X-Parse-Application-Id")
+        request.addValue("QuWThTdiRmTux3YaDseUSEpUKo7aBYM737yKd4gY", forHTTPHeaderField: "X-Parse-REST-API-Key")
+        let session = URLSession.shared
+        let task = session.dataTask(with: request) { data, response, error in
+            if error != nil { // Handle error
+                return
+            }
+            guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
+                return
+            }
+            guard let data = data else {
+                return
+            }
+            print(String(data: data, encoding: .utf8)!)
+            do {
+                // results
+                let studentInfoResponse = try JSONDecoder().decode(StudentLocations.self, from: data)
+                if studentInfoResponse.results.count > 0 {
+                    let studentInfo = studentInfoResponse.results[0]
+                    if studentInfo.objectId != nil {
+                        self.appDelegate.studentInformationObject = studentInfo
+                        self.appDelegate.hasExistingLocationStored = true
+                    }
+                }
+            } catch {
+                print("student check JSON parsing failed")
+            }
+        }
+        task.resume()
+    }
+    
+    func getUserPublicData() {
+        guard let key = appDelegate.postSession?.account.key else {
+            return
+        }
+        let request = URLRequest(url: URL(string: Constants.userUrl + "/" + key)!)
+        let session = URLSession.shared
+        let task = session.dataTask(with: request) { data, response, error in
+            if error != nil { // Handle error...
+                return
+            }
+            guard let data = data else {
+                return
+            }
+            let range = Range(5..<data.count)
+            let newData = data.subdata(in: range) /* subset response data! */
+            do {
+                let userResponse = try JSONDecoder().decode(PublicUserJson.self, from: newData)
+                self.appDelegate.studentPublicInformation = userResponse.user
+            } catch {
+                return
+            }
+        }
+        task.resume()
     }
 }
 
