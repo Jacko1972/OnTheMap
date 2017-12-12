@@ -25,7 +25,6 @@ class OnTheMapClient: NSObject {
         
         let task = session.dataTask(with: request) { data, response, error in
             func sendError(_ error: String) {
-                print(error)
                 let userInfo = [NSLocalizedDescriptionKey : error]
                 completionHandlerForAuth(false, NSError(domain: "Authenticate With Udacity Api", code: 1, userInfo: userInfo))
             }
@@ -63,9 +62,7 @@ class OnTheMapClient: NSObject {
     }
     
     func downloadStudentInformation(completionHandlerForInfo: @escaping (_ success: Bool, _ error: NSError?) -> Void) {
-        var request = URLRequest(url: URL(string: Constants.studentLocationDefault)!)
-        request.addValue("QrX47CA9cyuGewLdsL7o5Eb8iug6Em8ye0dnAbIr", forHTTPHeaderField: "X-Parse-Application-Id")
-        request.addValue("QuWThTdiRmTux3YaDseUSEpUKo7aBYM737yKd4gY", forHTTPHeaderField: "X-Parse-REST-API-Key")
+        var request = buildUrlRequestForParse("GET", Constants.studentLocationDefault)
         let session = URLSession.shared
         let task = session.dataTask(with: request) { data, response, error in
             func sendError(_ error: String) {
@@ -148,87 +145,86 @@ class OnTheMapClient: NSObject {
     }
     
     func sendInformationToUdacityApi(_ mapItem: MKMapItem, _ link: String, handler: @escaping (_ response: Bool, _ error: Error?) -> Void) {
+        func sendError(_ result: Bool, _ error: String) {
+            let userInfo = [NSLocalizedDescriptionKey : error]
+            handler(result, NSError(domain: "Send Information To Udacity Api", code: 1, userInfo: userInfo))
+        }
         guard let key = appDelegate.postSession?.account.key else {
-            handler(false, NSError(domain: "Missing Unique Key", code: 1, userInfo: nil))
+            sendError(false, "Missing Unique Key")
             return
         }
         guard let student = appDelegate.studentPublicInformation else {
-            handler(false, NSError(domain: "Missing Public Information Object", code: 1, userInfo: nil))
+            sendError(false, "Missing Public Information Object")
             return
         }
         if appDelegate.hasExistingLocationStored {
             let object = appDelegate.studentInformationObject!
             let urlString = Constants.studentLocation + "/" + object.objectId!
-            let url = URL(string: urlString)
-            var request = URLRequest(url: url!)
-            request.httpMethod = "PUT"
-            request.addValue("QrX47CA9cyuGewLdsL7o5Eb8iug6Em8ye0dnAbIr", forHTTPHeaderField: "X-Parse-Application-Id")
-            request.addValue("QuWThTdiRmTux3YaDseUSEpUKo7aBYM737yKd4gY", forHTTPHeaderField: "X-Parse-REST-API-Key")
+            var request = buildUrlRequestForParse("PUT", urlString)
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-            request.httpBody = "{\"uniqueKey\": \"\(key)\", \"firstName\": \"\(student.first_name)\", \"lastName\": \"\(student.last_name)\",\"mapString\": \"\(mapItem.name)\", \"mediaURL\": \"\(link)\",\"latitude\": \(mapItem.placemark.coordinate.latitude), \"longitude\": \(mapItem.placemark.coordinate.longitude)}".data(using: .utf8)
+            request.httpBody = "{\"uniqueKey\": \"\(key)\", \"firstName\": \"\(student.first_name!)\", \"lastName\": \"\(student.last_name!)\",\"mapString\": \"\(String(describing: mapItem.name))\", \"mediaURL\": \"\(link)\",\"latitude\": \(mapItem.placemark.coordinate.latitude), \"longitude\": \(mapItem.placemark.coordinate.longitude)}".data(using: .utf8)
             let session = URLSession.shared
-            let task = session.dataTask(with: request) { data, response, error in
-                if error != nil { // Handle error…
-                    handler(false, NSError(domain: "Error on PUT method", code: 1, userInfo: nil))
-                }
-                print(String(data: data!, encoding: .utf8)!)
-                guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
-                    let code = (response as? HTTPURLResponse)?.statusCode
-                    handler(false, NSError(domain: "Status Code Error: \(String(describing: code!))", code: 1, userInfo: nil))
-                    return
-                }
-                guard let data = data else {
-                    handler(false, NSError(domain: "No Data from Student Information PUT Request", code: 1, userInfo: nil))
-                    return
-                }
-                do {
-                    let putResponse = try JSONDecoder().decode(CompletedPutOfUserLocationResponse.self, from: data)
-                    if putResponse.updatedAt != nil {
-                        handler(true, nil)
-                    } else {
-                        handler(false, NSError(domain: "No Updated At date provided", code: 1, userInfo: nil))
-                    }
-                } catch {
-                    handler(false, NSError(domain: "JSON Parse of POST request failed", code: 1, userInfo: nil))
-                    return
-                }
-            }
-            task.resume()
+//            let task = session.dataTask(with: request) { data, response, error in
+//                if error != nil { // Handle error…
+//                    sendError(false, "Error on PUT method")
+//                    return
+//                }
+//                guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
+//                    let code = (response as? HTTPURLResponse)?.statusCode
+//                    sendError(false, "Status Code Error: \(String(describing: code!))")
+//                    return
+//                }
+//                guard let data = data else {
+//                    sendError(false, "No Data from Student Information PUT Request")
+//                    return
+//                }
+//                do {
+//                    let putResponse = try JSONDecoder().decode(CompletedPutOfUserLocationResponse.self, from: data)
+//                    if putResponse.updatedAt != nil {
+//                        sendError(true, "")
+//                        return
+//                    } else {
+//                        sendError(false, "No Updated At date provided")
+//                        return
+//                    }
+//                } catch {
+//                    sendError(false, "JSON Parse of POST request failed")
+//                    return
+//                }
+//            }
+//            task.resume()
         } else {
-            var request = URLRequest(url: URL(string: Constants.studentLocation)!)
-            request.httpMethod = "POST"
-            request.addValue("QrX47CA9cyuGewLdsL7o5Eb8iug6Em8ye0dnAbIr", forHTTPHeaderField: "X-Parse-Application-Id")
-            request.addValue("QuWThTdiRmTux3YaDseUSEpUKo7aBYM737yKd4gY", forHTTPHeaderField: "X-Parse-REST-API-Key")
+            var request = buildUrlRequestForParse("POST", Constants.studentLocation)
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-            request.httpBody = "{\"uniqueKey\": \"\(key)\", \"firstName\": \"\(student.first_name)\", \"lastName\": \"\(student.last_name)\",\"mapString\": \"\(mapItem.name)\", \"mediaURL\": \"\(link)\",\"latitude\": \(mapItem.placemark.coordinate.latitude), \"longitude\": \(mapItem.placemark.coordinate.longitude)}".data(using: .utf8)
+            request.httpBody = "{\"uniqueKey\": \"\(key)\", \"firstName\": \"\(student.first_name!)\", \"lastName\": \"\(student.last_name!)\",\"mapString\": \"\(mapItem.name!)\", \"mediaURL\": \"\(link)\",\"latitude\": \(mapItem.placemark.coordinate.latitude), \"longitude\": \(mapItem.placemark.coordinate.longitude)}".data(using: .utf8)
             let session = URLSession.shared
-            let task = session.dataTask(with: request) { data, response, error in
-                if error != nil { // Handle error…
-                    handler(false,NSError(domain: "Error on POST method", code: 1, userInfo: nil))
-                }
-                print(String(data: data!, encoding: .utf8)!)
-                guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
-                    let code = (response as? HTTPURLResponse)?.statusCode
-                    handler(false, NSError(domain: "Status Code Error: \(String(describing: code!))", code: 1, userInfo: nil))
-                    return
-                }
-                guard let data = data else {
-                    handler(false, NSError(domain: "No Data from Student Information POST Request", code: 1, userInfo: nil))
-                    return
-                }
-                do {
-                    let postResponse = try JSONDecoder().decode(CompletedPostOfUserLocationResponse.self, from: data)
-                    if postResponse.createdAt != nil {
-                        handler(true, nil)
-                    } else {
-                        handler(false, NSError(domain: "No Created At date provided", code: 1, userInfo: nil))
-                    }
-                } catch {
-                    handler(false, NSError(domain: "JSON Parse of POST request failed", code: 1, userInfo: nil))
-                    return
-                }
-            }
-            task.resume()
+//            let task = session.dataTask(with: request) { data, response, error in
+//                if error != nil { // Handle error…
+//                    sendError(false, "Error on POST method")
+//                    return
+//                }
+//                guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
+//                    let code = (response as? HTTPURLResponse)?.statusCode
+//                    sendError(false, "Status Code Error: \(String(describing: code!))")
+//                    return
+//                }
+//                guard let data = data else {
+//                    sendError(false, "No Data from Student Information POST Request")
+//                    return
+//                }
+//                do {
+//                    let postResponse = try JSONDecoder().decode(CompletedPostOfUserLocationResponse.self, from: data)
+//                    if postResponse.createdAt != nil {
+//                        sendError(true, "")
+//                    } else {
+//                        sendError(false, "No Created At date provided")
+//                    }
+//                } catch {
+//                    sendError(false, "JSON Parse of POST request failed")
+//                    return
+//                }
+//            }
+//            task.resume()
         }
     }
     
@@ -246,10 +242,7 @@ class OnTheMapClient: NSObject {
             return
         }
         let urlString = Constants.loggedInStudentLocation + uniqueKey
-        let url = URL(string: urlString)
-        var request = URLRequest(url: url!)
-        request.addValue("QrX47CA9cyuGewLdsL7o5Eb8iug6Em8ye0dnAbIr", forHTTPHeaderField: "X-Parse-Application-Id")
-        request.addValue("QuWThTdiRmTux3YaDseUSEpUKo7aBYM737yKd4gY", forHTTPHeaderField: "X-Parse-REST-API-Key")
+        let request = buildUrlRequestForParse("GET", urlString)
         let session = URLSession.shared
         let task = session.dataTask(with: request) { data, response, error in
             if error != nil { // Handle error
@@ -302,6 +295,14 @@ class OnTheMapClient: NSObject {
             }
         }
         task.resume()
+    }
+    
+    func buildUrlRequestForParse(_ method: String, _ url: String) -> URLRequest {
+        var request = URLRequest(url: URL(string: url)!)
+        request.httpMethod = method
+        request.addValue("QrX47CA9cyuGewLdsL7o5Eb8iug6Em8ye0dnAbIr", forHTTPHeaderField: "X-Parse-Application-Id")
+        request.addValue("QuWThTdiRmTux3YaDseUSEpUKo7aBYM737yKd4gY", forHTTPHeaderField: "X-Parse-REST-API-Key")
+        return request
     }
 }
 

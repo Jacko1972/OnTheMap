@@ -49,8 +49,6 @@ class LoginViewController: UIViewController {
         super.viewDidLoad()
         username.delegate = self
         password.delegate = self
-        NotificationCenter.default.addObserver(self, selector: #selector(networkStatusChanged(_:)), name: NSNotification.Name(rawValue: ReachabilityStatusChangedNotification), object: nil)
-        Reach().monitorReachabilityChanges()
         loginButton.setTitle("LOGIN", for: .normal)
         loginButton.setTitle("No Internet", for: .disabled)
     }
@@ -71,17 +69,20 @@ class LoginViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        keyboardNotifications()
+        subscribeToNotifications()
+        Reach().monitorReachabilityChanges()
     }
     
-    func keyboardNotifications() {
+    func subscribeToNotifications() {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: .UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: .UIKeyboardWillHide, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(networkStatusChanged(_:)), name: NSNotification.Name(rawValue: ReachabilityStatusChangedNotification), object: nil)
     }
     
-    func unsubscribeKeyboardNotifications() {
+    func unsubscribeFromNotifications() {
         NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillShow, object: nil)
         NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillHide, object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: ReachabilityStatusChangedNotification), object: nil)
     }
     
     @objc func keyboardWillShow(_ notification: Notification) {
@@ -124,7 +125,7 @@ class LoginViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        unsubscribeKeyboardNotifications()
+        unsubscribeFromNotifications()
     }
 }
 

@@ -19,26 +19,43 @@ class LocationConfirmationViewController: UIViewController, MKMapViewDelegate, C
     var link: String?
     
     @IBAction func finishAction(_ sender: UIButton) {
-        dismiss(animated: true, completion: nil)
-//        guard let mapItem = mapItem else {
-//            displayAlert(title: "Missing Map Item", msg: "Map Item not stored to pass to Udacity API!")
-//            return
-//        }
-//        guard let link = link else {
-//            displayAlert(title: "Information Missing", msg: "No Link was passed from previous View!")
-//            return
-//        }
-//        OnTheMapClient.sharedInstance().sendInformationToUdacityApi(mapItem, link) { (response, error) in
-//            if error != nil {
-//                self.displayAlert(title: "Error From Update", msg: "An Error was returned on update: \(error?.localizedDescription ?? "Missing Error")")
-//                return
-//            }
-//            if response {
-//
-//            } else {
-//                self.displayAlert(title: "Update Failed", msg: "Update sent but failed!")
-//            }
-//        }
+        
+        guard let mapItem = mapItem else {
+            displayAlert(title: "Missing Map Item", msg: "Map Item not stored to pass to Udacity API!")
+            return
+        }
+        guard let link = link else {
+            displayAlert(title: "Information Missing", msg: "No Link was passed from previous View!")
+            return
+        }
+        UIApplication.shared.isNetworkActivityIndicatorVisible = true
+        OnTheMapClient.sharedInstance().sendInformationToUdacityApi(mapItem, link) { (response, error) in
+            if error != nil {
+                DispatchQueue.main.async {
+                    self.displayAlert(title: "Error From Update", msg: "An Error was returned on update: \(error?.localizedDescription ?? "Missing Error")")
+                    UIApplication.shared.isNetworkActivityIndicatorVisible = false
+                }
+                return
+            }
+            if response {
+                OnTheMapClient.sharedInstance().downloadStudentInformation() { (success, error) in
+                    DispatchQueue.main.async {
+                        UIApplication.shared.isNetworkActivityIndicatorVisible = false
+                        if success {
+                            self.dismiss(animated: true, completion: nil)
+                        } else {
+                            self.displayAlert(title: "Information Download Error",
+                                              msg: "Domain: \(String(describing: error!.domain)). The system returned the following error: \(String(describing: error!.localizedDescription))")
+                        }
+                    }
+                }
+            } else {
+                DispatchQueue.main.async {
+                    UIApplication.shared.isNetworkActivityIndicatorVisible = false
+                    self.displayAlert(title: "Update Failed", msg: "Update sent but failed!")
+                }
+            }
+        }
     }
     
     func checkLocationAuthorizationStatus() {
