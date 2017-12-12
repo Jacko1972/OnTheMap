@@ -254,7 +254,6 @@ class OnTheMapClient: NSObject {
             guard let data = data else {
                 return
             }
-            print(String(data: data, encoding: .utf8)!)
             do {
                 // results
                 let studentInfoResponse = try JSONDecoder().decode(StudentLocations.self, from: data)
@@ -266,7 +265,7 @@ class OnTheMapClient: NSObject {
                     }
                 }
             } catch {
-                print("student check JSON parsing failed")
+                self.appDelegate.hasExistingLocationStored = false
             }
         }
         task.resume()
