@@ -164,67 +164,67 @@ class OnTheMapClient: NSObject {
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
             request.httpBody = "{\"uniqueKey\": \"\(key)\", \"firstName\": \"\(student.first_name!)\", \"lastName\": \"\(student.last_name!)\",\"mapString\": \"\(String(describing: mapItem.name))\", \"mediaURL\": \"\(link)\",\"latitude\": \(mapItem.placemark.coordinate.latitude), \"longitude\": \(mapItem.placemark.coordinate.longitude)}".data(using: .utf8)
             let session = URLSession.shared
-//            let task = session.dataTask(with: request) { data, response, error in
-//                if error != nil { // Handle error…
-//                    sendError(false, "Error on PUT method")
-//                    return
-//                }
-//                guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
-//                    let code = (response as? HTTPURLResponse)?.statusCode
-//                    sendError(false, "Status Code Error: \(String(describing: code!))")
-//                    return
-//                }
-//                guard let data = data else {
-//                    sendError(false, "No Data from Student Information PUT Request")
-//                    return
-//                }
-//                do {
-//                    let putResponse = try JSONDecoder().decode(CompletedPutOfUserLocationResponse.self, from: data)
-//                    if putResponse.updatedAt != nil {
-//                        sendError(true, "")
-//                        return
-//                    } else {
-//                        sendError(false, "No Updated At date provided")
-//                        return
-//                    }
-//                } catch {
-//                    sendError(false, "JSON Parse of POST request failed")
-//                    return
-//                }
-//            }
-//            task.resume()
+            let task = session.dataTask(with: request) { data, response, error in
+                if error != nil { // Handle error…
+                    sendError(false, "Error on PUT method")
+                    return
+                }
+                guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
+                    let code = (response as? HTTPURLResponse)?.statusCode
+                    sendError(false, "Status Code Error: \(String(describing: code!))")
+                    return
+                }
+                guard let data = data else {
+                    sendError(false, "No Data from Student Information PUT Request")
+                    return
+                }
+                do {
+                    let putResponse = try JSONDecoder().decode(CompletedPutOfUserLocationResponse.self, from: data)
+                    if putResponse.updatedAt != nil {
+                        sendError(true, "")
+                        return
+                    } else {
+                        sendError(false, "No Updated At date provided")
+                        return
+                    }
+                } catch {
+                    sendError(false, "JSON Parse of POST request failed")
+                    return
+                }
+            }
+            task.resume()
         } else {
             var request = buildUrlRequestForParse("POST", Constants.studentLocation)
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
             request.httpBody = "{\"uniqueKey\": \"\(key)\", \"firstName\": \"\(student.first_name!)\", \"lastName\": \"\(student.last_name!)\",\"mapString\": \"\(mapItem.name!)\", \"mediaURL\": \"\(link)\",\"latitude\": \(mapItem.placemark.coordinate.latitude), \"longitude\": \(mapItem.placemark.coordinate.longitude)}".data(using: .utf8)
             let session = URLSession.shared
-//            let task = session.dataTask(with: request) { data, response, error in
-//                if error != nil { // Handle error…
-//                    sendError(false, "Error on POST method")
-//                    return
-//                }
-//                guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
-//                    let code = (response as? HTTPURLResponse)?.statusCode
-//                    sendError(false, "Status Code Error: \(String(describing: code!))")
-//                    return
-//                }
-//                guard let data = data else {
-//                    sendError(false, "No Data from Student Information POST Request")
-//                    return
-//                }
-//                do {
-//                    let postResponse = try JSONDecoder().decode(CompletedPostOfUserLocationResponse.self, from: data)
-//                    if postResponse.createdAt != nil {
-//                        sendError(true, "")
-//                    } else {
-//                        sendError(false, "No Created At date provided")
-//                    }
-//                } catch {
-//                    sendError(false, "JSON Parse of POST request failed")
-//                    return
-//                }
-//            }
-//            task.resume()
+            let task = session.dataTask(with: request) { data, response, error in
+                if error != nil { // Handle error…
+                    sendError(false, "Error on POST method")
+                    return
+                }
+                guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
+                    let code = (response as? HTTPURLResponse)?.statusCode
+                    sendError(false, "Status Code Error: \(String(describing: code!))")
+                    return
+                }
+                guard let data = data else {
+                    sendError(false, "No Data from Student Information POST Request")
+                    return
+                }
+                do {
+                    let postResponse = try JSONDecoder().decode(CompletedPostOfUserLocationResponse.self, from: data)
+                    if postResponse.createdAt != nil {
+                        sendError(true, "")
+                    } else {
+                        sendError(false, "No Created At date provided")
+                    }
+                } catch {
+                    sendError(false, "JSON Parse of POST request failed")
+                    return
+                }
+            }
+            task.resume()
         }
     }
     
