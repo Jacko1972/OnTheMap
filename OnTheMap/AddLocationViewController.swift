@@ -115,7 +115,6 @@ class AddLocationViewController: UIViewController, UITextFieldDelegate {
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
-        findLocationAction(findLocationButton)
         return true
     }
     
