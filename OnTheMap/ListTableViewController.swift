@@ -43,7 +43,7 @@ class ListTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "StudentListCell", for: indexPath)
         let studentInfo = appDelegate.studentLocations[indexPath.row]
-        cell.textLabel?.text = studentInfo.getFullName()  // studentInfo.firstName! + " " + studentInfo.lastName!
+        cell.textLabel?.text = studentInfo.getFullName()
         cell.detailTextLabel?.text = studentInfo.mediaURL
         return cell
     }

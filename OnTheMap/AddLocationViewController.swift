@@ -21,6 +21,7 @@ class AddLocationViewController: UIViewController {
     @IBAction func cancelAddAction(_ sender: UIBarButtonItem) {
         dismiss(animated: true, completion: nil)
     }
+    
     @IBAction func findLocationAction(_ sender: UIButton) {
         guard let link = linkField.text, !link.isEmpty else {
             displayAlert(title: "Missing Link", msg: "No Link has been provided.")

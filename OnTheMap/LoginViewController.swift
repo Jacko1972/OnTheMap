@@ -38,8 +38,8 @@ class LoginViewController: UIViewController {
                 }
             }
         }
-
     }
+    
     @IBAction func signUp(_ sender: UIButton) {
         if let url = URL(string: "https://www.udacity.com/account/auth#!/signup") {
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
@@ -91,14 +91,13 @@ class LoginViewController: UIViewController {
     }
     
     func moveKeyboard() {
-        
         var viewFrame: CGRect = self.view.frame // Window Frame
         var activeField: CGPoint = activeTextField.frame.origin // Active Text Field origin
         activeField.y += activeTextField.frame.size.height // Move point to bottom of Active Text Field
         viewFrame.size.height -= keyBoardHeight // Remove Keyboard portion of Window Frame
 
         if !viewFrame.contains(activeField) { // Is the Active Text Field bottom left point now outside Window Frame
-            var distance = activeField.y - viewFrame.height // Set distance Active Text Field is below Keyboard
+            var distance = activeField.y - viewFrame.height // Get distance Active Text Field is below Keyboard
             distance += activeTextField.frame.size.height // Add height of text field to give a gap, not required to be textfield height
             view.frame.origin.y = -distance // Move Window Frame up so Active Field is just above keyboard
         }
