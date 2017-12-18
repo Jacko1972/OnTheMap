@@ -8,7 +8,7 @@
 
 import UIKit
 
-class LoginViewController: UIViewController {
+class LoginViewController: UIViewController, UITextFieldDelegate {
     
     var keyBoardHeight: CGFloat = 0
     var activeTextField: UITextField!
@@ -87,7 +87,9 @@ class LoginViewController: UIViewController {
     
     @objc func keyboardWillShow(_ notification: Notification) {
         keyBoardHeight = getKeyboardHeight(notification)
-        moveKeyboard()
+        if activeTextField != nil {
+            moveKeyboard()
+        }
     }
     
     func moveKeyboard() {
@@ -111,6 +113,12 @@ class LoginViewController: UIViewController {
         activeTextField = nil
     }
     
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        loginUser(loginButton)
+        return true
+    }
+    
     @objc func keyboardWillHide(_ notification: Notification) {
         keyBoardHeight = 0
         view.frame.origin.y = keyBoardHeight
@@ -125,13 +133,5 @@ class LoginViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         unsubscribeFromNotifications()
-    }
-}
-
-extension LoginViewController: UITextFieldDelegate {
-    
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        return true
     }
 }

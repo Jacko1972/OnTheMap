@@ -48,7 +48,7 @@
                                     <action selector="loginUser:" destination="xoH-7Y-lKA" eventType="touchUpInside" id="B6L-rw-cus"/>
                                 </connections>
                             </button>
-                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="AJ@1972jul29" borderStyle="roundedRect" placeholder="Password" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="LPJ-wJ-XTH">
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Password" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="LPJ-wJ-XTH">
                                 <rect key="frame" x="47.5" y="313.5" width="280" height="40"/>
                                 <constraints>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="280" id="WXu-71-Jvi"/>
@@ -222,16 +222,22 @@
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="splash" translatesAutoresizingMaskIntoConstraints="NO" id="Wot-Tu-mHk">
                                 <rect key="frame" x="127.5" y="104" width="120" height="120"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="120" id="ILe-aG-FDl"/>
+                                    <constraint firstAttribute="width" constant="120" id="ILe-aG-FDl">
+                                        <variation key="heightClass=compact-widthClass=compact" constant="90"/>
+                                    </constraint>
                                     <constraint firstAttribute="width" secondItem="Wot-Tu-mHk" secondAttribute="height" multiplier="1:1" id="fFb-kL-v36"/>
-                                    <constraint firstAttribute="height" constant="120" id="fnq-0o-H6O"/>
+                                    <constraint firstAttribute="height" constant="120" id="fnq-0o-H6O">
+                                        <variation key="heightClass=compact-widthClass=compact" constant="90"/>
+                                    </constraint>
                                 </constraints>
                             </imageView>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Location" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="2TH-K7-2Hb">
                                 <rect key="frame" x="47.5" y="240" width="280" height="40"/>
                                 <constraints>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="280" id="hjD-tV-HGR"/>
-                                    <constraint firstAttribute="height" constant="40" id="z3s-zF-oqY"/>
+                                    <constraint firstAttribute="height" constant="40" id="z3s-zF-oqY">
+                                        <variation key="heightClass=compact-widthClass=compact" constant="32"/>
+                                    </constraint>
                                 </constraints>
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -241,7 +247,9 @@
                                 <rect key="frame" x="47.5" y="288" width="280" height="40"/>
                                 <constraints>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="280" id="HCT-Uv-FTD"/>
-                                    <constraint firstAttribute="height" constant="40" id="OL6-VE-Qy9"/>
+                                    <constraint firstAttribute="height" constant="40" id="OL6-VE-Qy9">
+                                        <variation key="heightClass=compact-widthClass=compact" constant="32"/>
+                                    </constraint>
                                 </constraints>
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -251,7 +259,9 @@
                                 <rect key="frame" x="87.5" y="360" width="200" height="50"/>
                                 <color key="backgroundColor" red="0.0" green="0.58980089430000004" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="50" id="Rh4-C4-C0y"/>
+                                    <constraint firstAttribute="height" constant="50" id="Rh4-C4-C0y">
+                                        <variation key="heightClass=compact-widthClass=compact" constant="32"/>
+                                    </constraint>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="aGP-2L-DxF"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
@@ -277,7 +287,9 @@
                             <constraint firstItem="4Gx-zS-zcq" firstAttribute="top" secondItem="2TH-K7-2Hb" secondAttribute="bottom" constant="8" symbolic="YES" id="WSn-Ua-n6P"/>
                             <constraint firstItem="67T-Pn-cn5" firstAttribute="centerY" secondItem="JCl-0K-XJw" secondAttribute="centerY" constant="50" id="cds-Rz-f9K"/>
                             <constraint firstItem="Wot-Tu-mHk" firstAttribute="top" secondItem="tj4-5y-aMS" secondAttribute="top" constant="40" id="jaG-Uo-3Uk"/>
-                            <constraint firstItem="5xB-at-uDK" firstAttribute="top" secondItem="4Gx-zS-zcq" secondAttribute="bottom" constant="32" id="o1P-Ms-2sV"/>
+                            <constraint firstItem="5xB-at-uDK" firstAttribute="top" secondItem="4Gx-zS-zcq" secondAttribute="bottom" constant="32" id="o1P-Ms-2sV">
+                                <variation key="heightClass=compact-widthClass=compact" constant="16"/>
+                            </constraint>
                             <constraint firstItem="67T-Pn-cn5" firstAttribute="centerX" secondItem="JCl-0K-XJw" secondAttribute="centerX" id="vqe-qI-RSN"/>
                             <constraint firstItem="4Gx-zS-zcq" firstAttribute="centerX" secondItem="tj4-5y-aMS" secondAttribute="centerX" id="xsF-qS-oQc"/>
                         </constraints>
