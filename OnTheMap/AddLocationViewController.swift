@@ -22,6 +22,7 @@ class AddLocationViewController: UIViewController, UITextFieldDelegate {
     var activeTextField: UITextField!
     
     override func viewDidLoad() {
+        super.viewDidLoad()
         linkField.delegate = self
         locationField.delegate = self
     }
@@ -115,6 +116,9 @@ class AddLocationViewController: UIViewController, UITextFieldDelegate {
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
+        if textField == locationField {
+            linkField.becomeFirstResponder()
+        }
         return true
     }
     
@@ -124,7 +128,7 @@ class AddLocationViewController: UIViewController, UITextFieldDelegate {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        viewWillDisappear(animated)
+        super.viewWillDisappear(animated)
         unsubscribeFromNotifications()
     }
     
