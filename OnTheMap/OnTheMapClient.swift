@@ -93,7 +93,6 @@ class OnTheMapClient: NSObject {
                 tempArray = tempArray.sorted()
                 DispatchQueue.main.async {
                     let appDelegate = UIApplication.shared.delegate as! AppDelegate
-                    print(tempArray)
                     appDelegate.studentLocations = tempArray
                     NotificationCenter.default.post(name: Notification.Name("StudentLocationsDownloaded"), object: nil)
                 }
