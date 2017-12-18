@@ -13,8 +13,12 @@ class TabbedViewController: UITabBarController {
     @IBAction func refreshLocations(_ sender: Any) {
         startStudentInfoUpdate()
     }
-    @IBAction func addStudentLocation(_ sender: Any) {
+
+    @IBAction func logout(_ sender: UIBarButtonItem) {
+        OnTheMapClient.sharedInstance().deleteSessionWithUdacityApi()
+        dismiss(animated: true, completion: nil)
     }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         startStudentInfoUpdate()
