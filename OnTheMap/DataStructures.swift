@@ -12,7 +12,14 @@ struct StudentLocations: Decodable {
     let results: [StudentInformation]
 }
 
-struct StudentInformation:  Decodable {
+struct StudentInformation:  Decodable, Comparable {
+    static func <(lhs: StudentInformation, rhs: StudentInformation) -> Bool {
+        return lhs.createdAt! > rhs.createdAt!
+    }
+    
+    static func ==(lhs: StudentInformation, rhs: StudentInformation) -> Bool {
+        return lhs.firstName == rhs.firstName && lhs.lastName == rhs.lastName
+    }
     
     let createdAt: String?
     let firstName: String?

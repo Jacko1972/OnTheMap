@@ -90,8 +90,10 @@ class OnTheMapClient: NSObject {
                         tempArray.append(record)
                     }
                 }
+                tempArray = tempArray.sorted()
                 DispatchQueue.main.async {
                     let appDelegate = UIApplication.shared.delegate as! AppDelegate
+                    print(tempArray)
                     appDelegate.studentLocations = tempArray
                     NotificationCenter.default.post(name: Notification.Name("StudentLocationsDownloaded"), object: nil)
                 }
@@ -145,16 +147,16 @@ class OnTheMapClient: NSObject {
     }
     
     func sendInformationToUdacityApi(_ mapItem: MKMapItem, _ link: String, handler: @escaping (_ response: Bool, _ error: Error?) -> Void) {
-        func sendError(_ result: Bool, _ error: String) {
+        func sendError(_ error: String) {
             let userInfo = [NSLocalizedDescriptionKey : error]
-            handler(result, NSError(domain: "Send Information To Udacity Api", code: 1, userInfo: userInfo))
+            handler(false, NSError(domain: "Send Information To Udacity Api", code: 1, userInfo: userInfo))
         }
         guard let key = appDelegate.postSession?.account.key else {
-            sendError(false, "Missing Unique Key")
+            sendError("Missing Unique Key")
             return
         }
         guard let student = appDelegate.studentPublicInformation else {
-            sendError(false, "Missing Public Information Object")
+            sendError("Missing Public Information Object")
             return
         }
         if appDelegate.hasExistingLocationStored {
@@ -162,33 +164,33 @@ class OnTheMapClient: NSObject {
             let urlString = Constants.studentLocation + "/" + object.objectId!
             var request = buildUrlRequestForParse("PUT", urlString)
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-            request.httpBody = "{\"uniqueKey\": \"\(key)\", \"firstName\": \"\(student.first_name!)\", \"lastName\": \"\(student.last_name!)\",\"mapString\": \"\(String(describing: mapItem.name))\", \"mediaURL\": \"\(link)\",\"latitude\": \(mapItem.placemark.coordinate.latitude), \"longitude\": \(mapItem.placemark.coordinate.longitude)}".data(using: .utf8)
+            request.httpBody = "{\"uniqueKey\": \"\(key)\", \"firstName\": \"\(student.first_name!)\", \"lastName\": \"\(student.last_name!)\",\"mapString\": \"\(mapItem.name!)\", \"mediaURL\": \"\(link)\",\"latitude\": \(mapItem.placemark.coordinate.latitude), \"longitude\": \(mapItem.placemark.coordinate.longitude)}".data(using: .utf8)
             let session = URLSession.shared
             let task = session.dataTask(with: request) { data, response, error in
                 if error != nil { // Handle error…
-                    sendError(false, "Error on PUT method")
+                    sendError("Error on PUT method")
                     return
                 }
                 guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
                     let code = (response as? HTTPURLResponse)?.statusCode
-                    sendError(false, "Status Code Error: \(String(describing: code!))")
+                    sendError("Status Code Error: \(String(describing: code!))")
                     return
                 }
                 guard let data = data else {
-                    sendError(false, "No Data from Student Information PUT Request")
+                    sendError("No Data from Student Information PUT Request")
                     return
                 }
                 do {
                     let putResponse = try JSONDecoder().decode(CompletedPutOfUserLocationResponse.self, from: data)
                     if putResponse.updatedAt != nil {
-                        sendError(true, "")
+                        handler(true, nil)
                         return
                     } else {
-                        sendError(false, "No Updated At date provided")
+                        sendError("No Updated At date provided")
                         return
                     }
                 } catch {
-                    sendError(false, "JSON Parse of POST request failed")
+                    sendError("JSON Parse of POST request failed")
                     return
                 }
             }
@@ -200,27 +202,28 @@ class OnTheMapClient: NSObject {
             let session = URLSession.shared
             let task = session.dataTask(with: request) { data, response, error in
                 if error != nil { // Handle error…
-                    sendError(false, "Error on POST method")
+                    sendError("Error on POST method")
                     return
                 }
                 guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
                     let code = (response as? HTTPURLResponse)?.statusCode
-                    sendError(false, "Status Code Error: \(String(describing: code!))")
+                    sendError("Status Code Error: \(String(describing: code!))")
                     return
                 }
                 guard let data = data else {
-                    sendError(false, "No Data from Student Information POST Request")
+                    sendError("No Data from Student Information POST Request")
                     return
                 }
                 do {
                     let postResponse = try JSONDecoder().decode(CompletedPostOfUserLocationResponse.self, from: data)
                     if postResponse.createdAt != nil {
-                        sendError(true, "")
+                        handler(true, nil)
                     } else {
-                        sendError(false, "No Created At date provided")
+                        sendError("No Created At date provided")
+                        return
                     }
                 } catch {
-                    sendError(false, "JSON Parse of POST request failed")
+                    sendError("JSON Parse of POST request failed")
                     return
                 }
             }
@@ -263,6 +266,8 @@ class OnTheMapClient: NSObject {
                         self.appDelegate.studentInformationObject = studentInfo
                         self.appDelegate.hasExistingLocationStored = true
                     }
+                } else {
+                    self.appDelegate.hasExistingLocationStored = false
                 }
             } catch {
                 self.appDelegate.hasExistingLocationStored = false

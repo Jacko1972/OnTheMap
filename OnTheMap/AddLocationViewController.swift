@@ -15,6 +15,7 @@ class AddLocationViewController: UIViewController {
     @IBOutlet var linkField: UITextField!
     @IBOutlet var locationField: UITextField!
     @IBOutlet var findLocationButton: UIButton!
+    @IBOutlet var activityIndicator: UIActivityIndicatorView!
     var mapItem: MKMapItem?
     var shouldSegue: Bool = false
     
@@ -32,10 +33,10 @@ class AddLocationViewController: UIViewController {
             return
         }
         shouldSegue = false
-        UIApplication.shared.isNetworkActivityIndicatorVisible = true
+        toggleActivityIndicator(true)
         OnTheMapClient.sharedInstance().getLocalSearchLocationFromString(location) { (response, error) in
             DispatchQueue.main.async {
-                UIApplication.shared.isNetworkActivityIndicatorVisible = false
+                self.toggleActivityIndicator(false)
                 if error != nil {
                     self.displayAlert(title: "An Error Occurred", msg: "The Location lookup failed: \(error?.localizedDescription ?? "No Description")")
                     return
@@ -54,6 +55,12 @@ class AddLocationViewController: UIViewController {
                 }
             }
         }
+    }
+    
+    func toggleActivityIndicator(_ animate: Bool) {
+        UIApplication.shared.isNetworkActivityIndicatorVisible = animate
+        findLocationButton.isHidden = animate
+        animate ? activityIndicator.startAnimating() : activityIndicator.stopAnimating()
     }
 
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {

@@ -12,6 +12,7 @@ import CoreLocation
 
 class LocationConfirmationViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDelegate {
     
+    @IBOutlet var activityIndicator: UIActivityIndicatorView!
     @IBOutlet var mapView: MKMapView!
     @IBOutlet var finishButton: UIButton!
     let locationManager = CLLocationManager()
@@ -28,19 +29,19 @@ class LocationConfirmationViewController: UIViewController, MKMapViewDelegate, C
             displayAlert(title: "Information Missing", msg: "No Link was passed from previous View!")
             return
         }
-        UIApplication.shared.isNetworkActivityIndicatorVisible = true
+        toggleActivityIndicator(true)
         OnTheMapClient.sharedInstance().sendInformationToUdacityApi(mapItem, link) { (response, error) in
             if error != nil {
                 DispatchQueue.main.async {
                     self.displayAlert(title: "Error From Update", msg: "An Error was returned on update: \(error?.localizedDescription ?? "Missing Error")")
-                    UIApplication.shared.isNetworkActivityIndicatorVisible = false
+                    self.toggleActivityIndicator(false)
                 }
                 return
             }
             if response {
                 OnTheMapClient.sharedInstance().downloadStudentInformation() { (success, error) in
                     DispatchQueue.main.async {
-                        UIApplication.shared.isNetworkActivityIndicatorVisible = false
+                        self.toggleActivityIndicator(false)
                         if success {
                             self.dismiss(animated: true, completion: nil)
                         } else {
@@ -51,11 +52,17 @@ class LocationConfirmationViewController: UIViewController, MKMapViewDelegate, C
                 }
             } else {
                 DispatchQueue.main.async {
-                    UIApplication.shared.isNetworkActivityIndicatorVisible = false
+                    self.toggleActivityIndicator(false)
                     self.displayAlert(title: "Update Failed", msg: "Update sent but failed!")
                 }
             }
         }
+    }
+    
+    func toggleActivityIndicator(_ animate: Bool) {
+        UIApplication.shared.isNetworkActivityIndicatorVisible = animate
+        finishButton.isHidden = animate
+        animate ? activityIndicator.startAnimating() : activityIndicator.stopAnimating()
     }
     
     func checkLocationAuthorizationStatus() {
