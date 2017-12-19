@@ -13,13 +13,12 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     
     @IBOutlet var mapView: MKMapView!
     let locationManager = CLLocationManager()
-    var appDelegate: AppDelegate! = UIApplication.shared.delegate as? AppDelegate
     var pointAnnotations = [MKPointAnnotation]()
     
     func checkLocationAuthorizationStatus() {
         if CLLocationManager.authorizationStatus() == .authorizedWhenInUse {
             mapView.showsUserLocation = true
-            if appDelegate.studentLocations.count > 0 {
+            if OnTheMapClass.sharedInstance.studentLocations.count > 0 {
                 loadAnnotations()
             }
         } else {
@@ -29,7 +28,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         if status == CLAuthorizationStatus.authorizedWhenInUse {
-            if appDelegate.studentLocations.count > 0 {
+            if OnTheMapClass.sharedInstance.studentLocations.count > 0 {
                 loadAnnotations()
             }
         }
@@ -48,8 +47,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     }
     
     @objc func loadAnnotations() {
-        if appDelegate.studentLocations.count > 0 {
-            for record in appDelegate.studentLocations {
+        if OnTheMapClass.sharedInstance.studentLocations.count > 0 {
+            for record in OnTheMapClass.sharedInstance.studentLocations {
                 let location = CLLocationCoordinate2D(latitude: record.latitude!, longitude: record.longitude!)
                 let annotation = MKPointAnnotation()
                 annotation.coordinate = location
@@ -58,7 +57,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
                 pointAnnotations.append(annotation)
             }
         } else {
-            displayAlert(title: "No Data", msg: "No Locations to display!")
+            displayAlert(title: "No Data!", msg: "No locations have been retrieved from the app to display!")
         }
         if pointAnnotations.count > 0 {
             mapView.addAnnotations(pointAnnotations)
@@ -98,6 +97,10 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         guard let onTheMapPin = view.annotation as? MKPointAnnotation else {
             return
         }
-        UIApplication.shared.open(URL(string: onTheMapPin.subtitle!)!, options: [:], completionHandler: nil)
+        if UIApplication.shared.canOpenURL(URL.init(string: onTheMapPin.subtitle!)!) {
+            UIApplication.shared.open(URL(string: onTheMapPin.subtitle!)!, options: [:], completionHandler: nil)
+        } else {
+            displayAlert(title: "Invalid URL", msg: "Could not open the URL provided by API.")
+        }
     }
 }

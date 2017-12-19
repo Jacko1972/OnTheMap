@@ -27,14 +27,14 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             return
         }
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
-        OnTheMapClient.sharedInstance().authenticateWithUdacityApi(user, password: pass) { (success, error) in
+        OnTheMapClient.instance.authenticateWithUdacityApi(user, password: pass) { (success, error) in
             DispatchQueue.main.async {
                 UIApplication.shared.isNetworkActivityIndicatorVisible = false
                 if success {
                     self.performSegue(withIdentifier: "LoggedInSegue", sender: self)
                 } else {
                     self.displayAlert(title: "User Login Failed",
-                                      msg: "Domain: \(String(describing: error!.domain)). The system returned the following error: \(String(describing: error!.localizedDescription))")
+                                      msg: "The system did not recognise your username or password, please try again.")
                 }
             }
         }

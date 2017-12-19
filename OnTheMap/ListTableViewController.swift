@@ -9,8 +9,6 @@
 import UIKit
 
 class ListTableViewController: UITableViewController {
-
-    var appDelegate: AppDelegate! = UIApplication.shared.delegate as? AppDelegate
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,7 +25,7 @@ class ListTableViewController: UITableViewController {
         NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: "StudentLocationsDownloaded"), object: nil)
     }
     @objc func loadAnnotations() {
-        if appDelegate.studentLocations.count > 0 {
+        if OnTheMapClass.sharedInstance.studentLocations.count > 0 {
             self.tableView.reloadData()
         }
     }
@@ -37,19 +35,19 @@ class ListTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return appDelegate.studentLocations.count
+        return OnTheMapClass.sharedInstance.studentLocations.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "StudentListCell", for: indexPath)
-        let studentInfo = appDelegate.studentLocations[indexPath.row]
+        let studentInfo = OnTheMapClass.sharedInstance.studentLocations[indexPath.row]
         cell.textLabel?.text = studentInfo.getFullName()
         cell.detailTextLabel?.text = studentInfo.mediaURL
         return cell
     }
  
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let studentInfo = appDelegate.studentLocations[indexPath.row]
+        let studentInfo = OnTheMapClass.sharedInstance.studentLocations[indexPath.row]
         UIApplication.shared.open(URL(string: studentInfo.mediaURL!)!, options: [:], completionHandler: nil)
     }
 }

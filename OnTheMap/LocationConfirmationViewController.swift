@@ -30,7 +30,7 @@ class LocationConfirmationViewController: UIViewController, MKMapViewDelegate, C
             return
         }
         toggleActivityIndicator(true)
-        OnTheMapClient.sharedInstance().sendInformationToUdacityApi(mapItem, link) { (response, error) in
+        OnTheMapClient.instance.sendInformationToUdacityApi(mapItem, link) { (response, error) in
             if error != nil {
                 DispatchQueue.main.async {
                     self.displayAlert(title: "Error From Update", msg: "An Error was returned on update: \(error?.localizedDescription ?? "Missing Error")")
@@ -39,7 +39,7 @@ class LocationConfirmationViewController: UIViewController, MKMapViewDelegate, C
                 return
             }
             if response {
-                OnTheMapClient.sharedInstance().downloadStudentInformation() { (success, error) in
+                OnTheMapClient.instance.downloadStudentInformation() { (success, error) in
                     DispatchQueue.main.async {
                         self.toggleActivityIndicator(false)
                         if success {
@@ -93,6 +93,8 @@ class LocationConfirmationViewController: UIViewController, MKMapViewDelegate, C
     func loadPlaceMarks() {
         if mapItem != nil {
             mapView.addAnnotation((mapItem?.placemark)!)
+            let region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: (mapItem?.placemark.coordinate.latitude)!, longitude: (mapItem?.placemark.coordinate.longitude)!), span: MKCoordinateSpan(latitudeDelta: 2, longitudeDelta: 2))
+            mapView.setRegion(region, animated: true)
         } else {
             displayAlert(title: "Missing Map Item", msg: "An error occurred where no Map Item is available!")
         }

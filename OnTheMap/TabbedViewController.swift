@@ -15,7 +15,7 @@ class TabbedViewController: UITabBarController {
     }
 
     @IBAction func logout(_ sender: UIBarButtonItem) {
-        OnTheMapClient.sharedInstance().deleteSessionWithUdacityApi()
+        OnTheMapClient.instance.deleteSessionWithUdacityApi()
         dismiss(animated: true, completion: nil)
     }
     
@@ -26,7 +26,7 @@ class TabbedViewController: UITabBarController {
     
     func startStudentInfoUpdate() {
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
-        OnTheMapClient.sharedInstance().downloadStudentInformation() { (success, error) in
+        OnTheMapClient.instance.downloadStudentInformation() { (success, error) in
             DispatchQueue.main.async {
                 UIApplication.shared.isNetworkActivityIndicatorVisible = false
                 if !success {

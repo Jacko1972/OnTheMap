@@ -8,11 +8,11 @@
 
 import UIKit
 
-struct StudentLocations: Decodable {
+struct StudentLocations: Codable {
     let results: [StudentInformation]
 }
 
-struct StudentInformation:  Decodable, Comparable {
+struct StudentInformation:  Codable, Comparable {
     static func <(lhs: StudentInformation, rhs: StudentInformation) -> Bool {
         return lhs.createdAt! > rhs.createdAt!
     }
@@ -37,18 +37,18 @@ struct StudentInformation:  Decodable, Comparable {
     }
 }
 
-struct PostSession: Decodable {
+struct PostSession: Codable {
     
     let account: Account
     let session: Session
 }
-struct Session: Decodable {
+struct Session: Codable {
     
     let id: String // Session ID
     let expiration: String // Session Expiry Date
 }
 
-struct Account: Decodable {
+struct Account: Codable {
     
     let registered: Bool // Is user registered
     let key: String // User key
@@ -68,11 +68,11 @@ struct PublicUserData: Codable {
     let key: String?
 }
 
-struct CompletedPostOfUserLocationResponse: Decodable {
+struct CompletedPostOfUserLocationResponse: Codable {
     let createdAt: String?
     let objectId: String?
 }
-struct CompletedPutOfUserLocationResponse: Decodable {
+struct CompletedPutOfUserLocationResponse: Codable {
     let updatedAt: String?
 }
 

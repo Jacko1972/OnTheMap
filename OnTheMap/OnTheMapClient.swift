@@ -13,7 +13,7 @@ import MapKit
 
 class OnTheMapClient: NSObject {
     
-    var appDelegate: AppDelegate! = UIApplication.shared.delegate as? AppDelegate
+    static let instance = OnTheMapClient()
     
     func authenticateWithUdacityApi(_ username: String, password: String, completionHandlerForAuth: @escaping (_ success: Bool, _ error: NSError?) -> Void) {
         var request = URLRequest(url: URL(string: Constants.sessionUrl)!)
@@ -47,8 +47,7 @@ class OnTheMapClient: NSObject {
                 let authResponse = try JSONDecoder().decode(PostSession.self, from: newData)
                 if authResponse.account.registered {
                     DispatchQueue.main.async {
-                        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-                        appDelegate.postSession = authResponse
+                        OnTheMapClass.sharedInstance.postSession = authResponse
                         self.checkForLocationOnUdacityAPI()
                         self.getUserPublicData()
                     }
@@ -70,35 +69,33 @@ class OnTheMapClient: NSObject {
                 completionHandlerForInfo(false, NSError(domain: "Download Student Information", code: 1, userInfo: userInfo))
             }
             if error != nil { // Handle error...
-                sendError("Error returned from Information Session")
+                sendError("Error prevented download of Student Information!")
                 return
             }
             guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
-                let code = (response as? HTTPURLResponse)?.statusCode
-                sendError("Status Code Error: \(String(describing: code!))")
+                sendError("Could not connect to server for Student Information!")
                 return
             }
             guard let data = data else {
-                sendError("No Data from Student Information Request")
+                sendError("No Data from Student Information Request!")
                 return
             }
             do {
                 let studentInfoResponse = try JSONDecoder().decode(StudentLocations.self, from: data)
                 var tempArray = [StudentInformation]()
                 for record: StudentInformation in studentInfoResponse.results {
-                    if OnTheMapClient.sharedInstance().isCompleteStudentInformation(record: record) {
+                    if OnTheMapClient.instance.isCompleteStudentInformation(record: record) {
                         tempArray.append(record)
                     }
                 }
                 tempArray = tempArray.sorted()
                 DispatchQueue.main.async {
-                    let appDelegate = UIApplication.shared.delegate as! AppDelegate
-                    appDelegate.studentLocations = tempArray
+                    OnTheMapClass.sharedInstance.studentLocations = tempArray
                     NotificationCenter.default.post(name: Notification.Name("StudentLocationsDownloaded"), object: nil)
                 }
                 completionHandlerForInfo(true, nil)
             } catch {
-                sendError("Unable to Decode JSON from Info Request: \(error)")
+                sendError("Unable to Decode JSON from Info Request!")
             }
         }
         task.resume()
@@ -129,13 +126,6 @@ class OnTheMapClient: NSObject {
         task.resume()
     }
     
-    class func sharedInstance() ->OnTheMapClient {
-        struct Singleton {
-            static let instance = OnTheMapClient()
-        }
-        return Singleton.instance
-    }
-    
     func getLocalSearchLocationFromString(_ stringName: String, completionHandler: @escaping (_ mapItems: MKLocalSearchResponse?, _ error: Error?) -> Void) {
         let request  = MKLocalSearchRequest()
         request.naturalLanguageQuery = stringName
@@ -150,16 +140,16 @@ class OnTheMapClient: NSObject {
             let userInfo = [NSLocalizedDescriptionKey : error]
             handler(false, NSError(domain: "Send Information To Udacity Api", code: 1, userInfo: userInfo))
         }
-        guard let key = appDelegate.postSession?.account.key else {
+        guard let key = OnTheMapClass.sharedInstance.postSession?.account.key else {
             sendError("Missing Unique Key")
             return
         }
-        guard let student = appDelegate.studentPublicInformation else {
+        guard let student = OnTheMapClass.sharedInstance.studentPublicInformation else {
             sendError("Missing Public Information Object")
             return
         }
-        if appDelegate.hasExistingLocationStored {
-            let object = appDelegate.studentInformationObject!
+        if OnTheMapClass.sharedInstance.hasExistingLocationStored {
+            let object = OnTheMapClass.sharedInstance.studentInformationObject!
             let urlString = Constants.studentLocation + "/" + object.objectId!
             var request = buildUrlRequestForParse("PUT", urlString)
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -167,16 +157,15 @@ class OnTheMapClient: NSObject {
             let session = URLSession.shared
             let task = session.dataTask(with: request) { data, response, error in
                 if error != nil { // Handle error…
-                    sendError("Error on PUT method")
+                    sendError("Error from Student Information Update request: \(error!.localizedDescription)")
                     return
                 }
                 guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
-                    let code = (response as? HTTPURLResponse)?.statusCode
-                    sendError("Status Code Error: \(String(describing: code!))")
+                    sendError("Could not connect to Udacity API to update Student Information!")
                     return
                 }
                 guard let data = data else {
-                    sendError("No Data from Student Information PUT Request")
+                    sendError("No Data returned from Student Information PUT Request!")
                     return
                 }
                 do {
@@ -185,11 +174,11 @@ class OnTheMapClient: NSObject {
                         handler(true, nil)
                         return
                     } else {
-                        sendError("No Updated At date provided")
+                        sendError("Student Information Update not Completed!")
                         return
                     }
                 } catch {
-                    sendError("JSON Parse of POST request failed")
+                    sendError("JSON Parse of Student Info update request failed!")
                     return
                 }
             }
@@ -201,16 +190,15 @@ class OnTheMapClient: NSObject {
             let session = URLSession.shared
             let task = session.dataTask(with: request) { data, response, error in
                 if error != nil { // Handle error…
-                    sendError("Error on POST method")
+                    sendError("Error from Student Information Creation request: \(error!.localizedDescription)")
                     return
                 }
                 guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
-                    let code = (response as? HTTPURLResponse)?.statusCode
-                    sendError("Status Code Error: \(String(describing: code!))")
+                    sendError("Could not connect to Udacity API to create Student Information!")
                     return
                 }
                 guard let data = data else {
-                    sendError("No Data from Student Information POST Request")
+                    sendError("No Data returned from Student Information POST Request!")
                     return
                 }
                 do {
@@ -218,11 +206,11 @@ class OnTheMapClient: NSObject {
                     if postResponse.createdAt != nil {
                         handler(true, nil)
                     } else {
-                        sendError("No Created At date provided")
+                        sendError("Student Information Creation not Completed!")
                         return
                     }
                 } catch {
-                    sendError("JSON Parse of POST request failed")
+                    sendError("JSON Parse of Student Info creation request failed!")
                     return
                 }
             }
@@ -231,7 +219,7 @@ class OnTheMapClient: NSObject {
     }
     
     func checkForLocationOnUdacityAPI() {
-        guard let key = appDelegate.postSession?.account.key else {
+        guard let key = OnTheMapClass.sharedInstance.postSession?.account.key else {
             return
         }
         let jsonEncoder = JSONEncoder()
@@ -262,21 +250,21 @@ class OnTheMapClient: NSObject {
                 if studentInfoResponse.results.count > 0 {
                     let studentInfo = studentInfoResponse.results[0]
                     if studentInfo.objectId != nil {
-                        self.appDelegate.studentInformationObject = studentInfo
-                        self.appDelegate.hasExistingLocationStored = true
+                        OnTheMapClass.sharedInstance.studentInformationObject = studentInfo
+                        OnTheMapClass.sharedInstance.hasExistingLocationStored = true
                     }
                 } else {
-                    self.appDelegate.hasExistingLocationStored = false
+                    OnTheMapClass.sharedInstance.hasExistingLocationStored = false
                 }
             } catch {
-                self.appDelegate.hasExistingLocationStored = false
+                OnTheMapClass.sharedInstance.hasExistingLocationStored = false
             }
         }
         task.resume()
     }
     
     func getUserPublicData() {
-        guard let key = appDelegate.postSession?.account.key else {
+        guard let key = OnTheMapClass.sharedInstance.postSession?.account.key else {
             return
         }
         let request = URLRequest(url: URL(string: Constants.userUrl + "/" + key)!)
@@ -292,7 +280,7 @@ class OnTheMapClient: NSObject {
             let newData = data.subdata(in: range) /* subset response data! */
             do {
                 let userResponse = try JSONDecoder().decode(PublicUserJson.self, from: newData)
-                self.appDelegate.studentPublicInformation = userResponse.user
+                OnTheMapClass.sharedInstance.studentPublicInformation = userResponse.user
             } catch {
                 return
             }

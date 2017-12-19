@@ -47,7 +47,7 @@ class AddLocationViewController: UIViewController, UITextFieldDelegate {
         }
         shouldSegue = false
         toggleActivityIndicator(true)
-        OnTheMapClient.sharedInstance().getLocalSearchLocationFromString(location) { (response, error) in
+        OnTheMapClient.instance.getLocalSearchLocationFromString(location) { (response, error) in
             DispatchQueue.main.async {
                 self.toggleActivityIndicator(false)
                 if error != nil {
@@ -55,7 +55,7 @@ class AddLocationViewController: UIViewController, UITextFieldDelegate {
                     return
                 }
                 guard let response = response else {
-                    self.displayAlert(title: "Missing Locations", msg: "We were unable to find Location for \(location), please try again.")
+                    self.displayAlert(title: "Missing Locations", msg: "We were unable to find \(location), please try again.")
                     return
                 }
                 if response.mapItems.count > 0 {
@@ -63,7 +63,7 @@ class AddLocationViewController: UIViewController, UITextFieldDelegate {
                     self.shouldSegue = true
                     self.performSegue(withIdentifier: "ShowAddLocationConfirm", sender: nil)
                 } else {
-                    self.displayAlert(title: "No Locations", msg: "We were unable to find Location for \(location), please try again.")
+                    self.displayAlert(title: "No Locations", msg: "We were unable to find \(location), please try again.")
                     return
                 }
             }
