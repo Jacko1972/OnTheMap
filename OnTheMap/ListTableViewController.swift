@@ -48,6 +48,15 @@ class ListTableViewController: UITableViewController {
  
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let studentInfo = OnTheMapClass.sharedInstance.studentLocations[indexPath.row]
-        UIApplication.shared.open(URL(string: studentInfo.mediaURL!)!, options: [:], completionHandler: nil)
+        guard let url = studentInfo.mediaURL else {
+            displayAlert(title: "Missing URL", msg: "Cannot find URL to open!")
+            return
+        }
+        if UIApplication.shared.canOpenURL(URL(string: url)!) {
+            UIApplication.shared.open(URL(string: url)!, options: [:], completionHandler: nil)
+        } else {
+            displayAlert(title: "Invalid URL", msg: "Could not open the URL provided by API.")
+            return
+        }
     }
 }

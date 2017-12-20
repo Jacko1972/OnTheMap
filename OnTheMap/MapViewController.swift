@@ -97,10 +97,15 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         guard let onTheMapPin = view.annotation as? MKPointAnnotation else {
             return
         }
-        if UIApplication.shared.canOpenURL(URL.init(string: onTheMapPin.subtitle!)!) {
-            UIApplication.shared.open(URL(string: onTheMapPin.subtitle!)!, options: [:], completionHandler: nil)
+        guard let url = onTheMapPin.subtitle else {
+            displayAlert(title: "Missing URL", msg: "Cannot find URL to open!")
+            return
+        }
+        if UIApplication.shared.canOpenURL(URL(string: url)!) {
+            UIApplication.shared.open(URL(string: url)!, options: [:], completionHandler: nil)
         } else {
             displayAlert(title: "Invalid URL", msg: "Could not open the URL provided by API.")
+            return
         }
     }
 }

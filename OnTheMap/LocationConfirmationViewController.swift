@@ -29,8 +29,23 @@ class LocationConfirmationViewController: UIViewController, MKMapViewDelegate, C
             displayAlert(title: "Information Missing", msg: "No Link was passed from previous View!")
             return
         }
+        guard let key = OnTheMapClass.sharedInstance.postSession?.account.key else {
+            displayAlert(title: "Missing Information", msg: "Missing Unique Key for information!")
+            return
+        }
+        guard let student = OnTheMapClass.sharedInstance.studentPublicInformation else {
+            displayAlert(title: "Missing Information", msg: "Missing Public Information Object")
+            return
+        }
+        let locationInfo = LocationInformation(uniqueKey: key,
+                                               firstName: student.first_name!,
+                                               lastName: student.last_name!,
+                                               mapString: mapItem.name!,
+                                               mediaURL: link,
+                                               latitude: mapItem.placemark.coordinate.latitude,
+                                               longitude: mapItem.placemark.coordinate.longitude)
         toggleActivityIndicator(true)
-        OnTheMapClient.instance.sendInformationToUdacityApi(mapItem, link) { (response, error) in
+        OnTheMapClient.instance.sendInformationToUdacityApi(locationInfo) { (response, error) in
             if error != nil {
                 DispatchQueue.main.async {
                     self.displayAlert(title: "Error From Update", msg: "An Error was returned on update: \(error?.localizedDescription ?? "Missing Error")")

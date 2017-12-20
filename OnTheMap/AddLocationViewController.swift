@@ -51,7 +51,7 @@ class AddLocationViewController: UIViewController, UITextFieldDelegate {
             DispatchQueue.main.async {
                 self.toggleActivityIndicator(false)
                 if error != nil {
-                    self.displayAlert(title: "An Error Occurred", msg: "The Location lookup failed: \(error?.localizedDescription ?? "No Description")")
+                    self.displayAlert(title: "An Error Occurred", msg: "The Location lookup failed: \(error!.localizedDescription)")
                     return
                 }
                 guard let response = response else {
@@ -149,10 +149,8 @@ class AddLocationViewController: UIViewController, UITextFieldDelegate {
         if segue.identifier == "ShowAddLocationConfirm" {
             if let controller = segue.destination as? LocationConfirmationViewController {
                 controller.mapItem = self.mapItem!
-                controller.link = self.linkField.text
+                controller.link = linkField.text
             }
         }
     }
-    
-    
 }

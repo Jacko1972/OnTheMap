@@ -105,10 +105,9 @@ class OnTheMapClient: NSObject {
         if record.firstName == nil || record.lastName == nil || record.latitude == nil || record.longitude == nil || record.mediaURL == nil {
             return false // Important information is missing
         }
-        if !record.mediaURL!.isValidURL() {
-            return false // URL cannot be opened
-        }
-        return true // All info in record
+        let pattern = "((https|http)://)((\\w|-)+)(([.]|[/])((\\w|-)+))+"
+        let predicate = NSPredicate(format:"SELF MATCHES %@", argumentArray:[pattern])
+        return predicate.evaluate(with: record.mediaURL)
     }
     
     func deleteSessionWithUdacityApi() {
@@ -135,25 +134,27 @@ class OnTheMapClient: NSObject {
         }
     }
     
-    func sendInformationToUdacityApi(_ mapItem: MKMapItem, _ link: String, handler: @escaping (_ response: Bool, _ error: Error?) -> Void) {
+    func sendInformationToUdacityApi(_ locationInfo: LocationInformation, handler: @escaping (_ response: Bool, _ error: Error?) -> Void) {
         func sendError(_ error: String) {
             let userInfo = [NSLocalizedDescriptionKey : error]
             handler(false, NSError(domain: "Send Information To Udacity Api", code: 1, userInfo: userInfo))
         }
-        guard let key = OnTheMapClass.sharedInstance.postSession?.account.key else {
-            sendError("Missing Unique Key")
+        var json: Data?
+        do {
+            json = try JSONEncoder().encode(locationInfo)
+        } catch {
+            sendError("Unable to create query to send information to Udacity")
             return
         }
-        guard let student = OnTheMapClass.sharedInstance.studentPublicInformation else {
-            sendError("Missing Public Information Object")
-            return
-        }
+        
         if OnTheMapClass.sharedInstance.hasExistingLocationStored {
             let object = OnTheMapClass.sharedInstance.studentInformationObject!
             let urlString = Constants.studentLocation + "/" + object.objectId!
             var request = buildUrlRequestForParse("PUT", urlString)
+            
+            
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-            request.httpBody = "{\"uniqueKey\": \"\(key)\", \"firstName\": \"\(student.first_name!)\", \"lastName\": \"\(student.last_name!)\",\"mapString\": \"\(mapItem.name!)\", \"mediaURL\": \"\(link)\",\"latitude\": \(mapItem.placemark.coordinate.latitude), \"longitude\": \(mapItem.placemark.coordinate.longitude)}".data(using: .utf8)
+            request.httpBody = json
             let session = URLSession.shared
             let task = session.dataTask(with: request) { data, response, error in
                 if error != nil { // Handle error…
@@ -171,6 +172,7 @@ class OnTheMapClient: NSObject {
                 do {
                     let putResponse = try JSONDecoder().decode(CompletedPutOfUserLocationResponse.self, from: data)
                     if putResponse.updatedAt != nil {
+                        self.checkForLocationOnUdacityAPI()
                         handler(true, nil)
                         return
                     } else {
@@ -186,7 +188,7 @@ class OnTheMapClient: NSObject {
         } else {
             var request = buildUrlRequestForParse("POST", Constants.studentLocation)
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-            request.httpBody = "{\"uniqueKey\": \"\(key)\", \"firstName\": \"\(student.first_name!)\", \"lastName\": \"\(student.last_name!)\",\"mapString\": \"\(mapItem.name!)\", \"mediaURL\": \"\(link)\",\"latitude\": \(mapItem.placemark.coordinate.latitude), \"longitude\": \(mapItem.placemark.coordinate.longitude)}".data(using: .utf8)
+            request.httpBody = json
             let session = URLSession.shared
             let task = session.dataTask(with: request) { data, response, error in
                 if error != nil { // Handle error…
@@ -204,6 +206,7 @@ class OnTheMapClient: NSObject {
                 do {
                     let postResponse = try JSONDecoder().decode(CompletedPostOfUserLocationResponse.self, from: data)
                     if postResponse.createdAt != nil {
+                        self.checkForLocationOnUdacityAPI()
                         handler(true, nil)
                     } else {
                         sendError("Student Information Creation not Completed!")
@@ -294,21 +297,5 @@ class OnTheMapClient: NSObject {
         request.addValue("QrX47CA9cyuGewLdsL7o5Eb8iug6Em8ye0dnAbIr", forHTTPHeaderField: "X-Parse-Application-Id")
         request.addValue("QuWThTdiRmTux3YaDseUSEpUKo7aBYM737yKd4gY", forHTTPHeaderField: "X-Parse-REST-API-Key")
         return request
-    }
-}
-
-extension String {
-    
-    func isValidURL() -> Bool {
-        guard let url = URLComponents.init(string: self) else {
-            return false
-        }
-        guard url.host != nil, url.url != nil else {
-            return false
-        }
-        if (url.host?.isEmpty)! {
-            return false
-        }
-        return true
     }
 }

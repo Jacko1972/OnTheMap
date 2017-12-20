@@ -57,13 +57,13 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         let status = Reach().connectionStatus()
         switch status {
         case .offline, .unknown:
-            updateUiToAllowInternetActions(false)
+            allowInternetActions(false)
         default:
-            updateUiToAllowInternetActions(true)
+            allowInternetActions(true)
         }
     }
     
-    func updateUiToAllowInternetActions(_ available: Bool) -> Void {
+    func allowInternetActions(_ available: Bool) -> Void {
         loginButton.isEnabled = available
     }
     
