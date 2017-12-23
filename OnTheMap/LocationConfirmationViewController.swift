@@ -4,7 +4,7 @@
 //
 //  Created by Andrew Jackson on 04/12/2017.
 //  Copyright © 2017 Jacko1972. All rights reserved.
-//
+////
 
 import UIKit
 import MapKit
@@ -18,6 +18,7 @@ class LocationConfirmationViewController: UIViewController, MKMapViewDelegate, C
     let locationManager = CLLocationManager()
     var mapItem: MKMapItem?
     var link: String?
+    let reachability = Reachability()!
     
     @IBAction func finishAction(_ sender: UIButton) {
         
@@ -103,6 +104,38 @@ class LocationConfirmationViewController: UIViewController, MKMapViewDelegate, C
         mapView.delegate = self
         self.navigationItem.title = "Confirm Location"
         checkLocationAuthorizationStatus()
+        finishButton.setTitle("FINISH", for: .normal)
+        finishButton.setTitle("No Internet", for: .disabled)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        NotificationCenter.default.addObserver(self, selector: #selector(networkStatusChanged(_:)), name: .reachabilityChanged, object: reachability)
+        do {
+            try reachability.startNotifier()
+        } catch {
+            print("could not start reachability notifier")
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        reachability.stopNotifier()
+        NotificationCenter.default.removeObserver(self, name: .reachabilityChanged, object: reachability)
+    }
+    
+    @objc func networkStatusChanged(_ notification: Notification) {
+        let reachability = notification.object as! Reachability
+        switch reachability.connection {
+        case .none:
+            allowInternetActions(false)
+        default:
+            allowInternetActions(true)
+        }
+    }
+    
+    func allowInternetActions(_ available: Bool) -> Void {
+        finishButton.isEnabled = available
     }
     
     func loadPlaceMarks() {

@@ -4,7 +4,7 @@
 //
 //  Created by Andrew Jackson on 14/11/2017.
 //  Copyright © 2017 Jacko1972. All rights reserved.
-//
+////
 
 import UIKit
 import CoreLocation
@@ -20,11 +20,14 @@ class AddLocationViewController: UIViewController, UITextFieldDelegate {
     var shouldSegue: Bool = false
     var keyBoardHeight: CGFloat = 0
     var activeTextField: UITextField!
+    let reachability = Reachability()!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         linkField.delegate = self
         locationField.delegate = self
+        findLocationButton.setTitle("Find Location", for: .normal)
+        findLocationButton.setTitle("No Internet", for: .disabled)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -34,6 +37,20 @@ class AddLocationViewController: UIViewController, UITextFieldDelegate {
     
     @IBAction func cancelAddAction(_ sender: UIBarButtonItem) {
         dismiss(animated: true, completion: nil)
+    }
+    
+    @objc func networkStatusChanged(_ notification: Notification) {
+        let reachability = notification.object as! Reachability
+        switch reachability.connection {
+        case .none:
+            allowInternetActions(false)
+        default:
+            allowInternetActions(true)
+        }
+    }
+    
+    func allowInternetActions(_ available: Bool) -> Void {
+        findLocationButton.isEnabled = available
     }
     
     @IBAction func findLocationAction(_ sender: UIButton) {
@@ -79,11 +96,19 @@ class AddLocationViewController: UIViewController, UITextFieldDelegate {
     func subscribeToNotifications() {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: .UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: .UIKeyboardWillHide, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(networkStatusChanged(_:)), name: .reachabilityChanged, object: reachability)
+        do {
+            try reachability.startNotifier()
+        } catch {
+            print("could not start reachability notifier")
+        }
     }
     
     func unsubscribeFromNotifications() {
         NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillShow, object: nil)
         NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillHide, object: nil)
+        reachability.stopNotifier()
+        NotificationCenter.default.removeObserver(self, name: .reachabilityChanged, object: reachability)
     }
     
     @objc func keyboardWillShow(_ notification: Notification) {
