@@ -17,4 +17,4 @@ Working with data from networked sources is as important to iOS development as c
 
 ## Credits
 * App icon - https://www.freepik.com/free-vector/map-pin-in-a-map_714013.htm Designed by Freepik
-* Reach - https://github.com/Isuru-Nanayakkara/Reach
+* Reachability - https://github.com/ashleymills/Reachability.swift
