@@ -11,7 +11,6 @@
 		D703F70B1FBE139800257467 /* OnTheMapClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = D703F70A1FBE139800257467 /* OnTheMapClient.swift */; };
 		D73BC4691FE941B40082C711 /* OnTheMapClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = D73BC4681FE941B40082C711 /* OnTheMapClass.swift */; };
 		D740B5FF1FCDF1BE00A228EF /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D740B5FE1FCDF1BE00A228EF /* Extensions.swift */; };
-		D740B6011FCE035400A228EF /* Reach.swift in Sources */ = {isa = PBXBuildFile; fileRef = D740B6001FCE035400A228EF /* Reach.swift */; };
 		D790A3E01FBB1D3F004D4DF3 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D790A3DF1FBB1D3F004D4DF3 /* MapViewController.swift */; };
 		D790A3E21FBB1DA9004D4DF3 /* ListTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D790A3E11FBB1DA9004D4DF3 /* ListTableViewController.swift */; };
 		D790A3E41FBB6913004D4DF3 /* TabbedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D790A3E31FBB6913004D4DF3 /* TabbedViewController.swift */; };
@@ -24,6 +23,8 @@
 		D7D185221FBA1EBF00B59497 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7D185211FBA1EBF00B59497 /* MapKit.framework */; };
 		D7D185241FBA1FDF00B59497 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D185231FBA1FDF00B59497 /* LoginViewController.swift */; };
 		D7D185261FBA56BA00B59497 /* DataStructures.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D185251FBA56BA00B59497 /* DataStructures.swift */; };
+		D7D5E1291FEEF2A10000A1C7 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7D5E1281FEEF2A10000A1C7 /* SystemConfiguration.framework */; };
+		D7D5E12B1FEEF8F80000A1C7 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D5E12A1FEEF8F80000A1C7 /* Reachability.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,7 +32,6 @@
 		D703F70A1FBE139800257467 /* OnTheMapClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnTheMapClient.swift; sourceTree = "<group>"; };
 		D73BC4681FE941B40082C711 /* OnTheMapClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnTheMapClass.swift; sourceTree = "<group>"; };
 		D740B5FE1FCDF1BE00A228EF /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
-		D740B6001FCE035400A228EF /* Reach.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reach.swift; sourceTree = "<group>"; };
 		D790A3DF1FBB1D3F004D4DF3 /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		D790A3E11FBB1DA9004D4DF3 /* ListTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListTableViewController.swift; sourceTree = "<group>"; };
 		D790A3E31FBB6913004D4DF3 /* TabbedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabbedViewController.swift; sourceTree = "<group>"; };
@@ -46,6 +46,8 @@
 		D7D185211FBA1EBF00B59497 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		D7D185231FBA1FDF00B59497 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		D7D185251FBA56BA00B59497 /* DataStructures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStructures.swift; sourceTree = "<group>"; };
+		D7D5E1281FEEF2A10000A1C7 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		D7D5E12A1FEEF8F80000A1C7 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,6 +55,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D7D5E1291FEEF2A10000A1C7 /* SystemConfiguration.framework in Frameworks */,
 				D7D185221FBA1EBF00B59497 /* MapKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -94,9 +97,9 @@
 				D703F7081FBE135900257467 /* OnTheMapConstants.swift */,
 				D703F70A1FBE139800257467 /* OnTheMapClient.swift */,
 				D740B5FE1FCDF1BE00A228EF /* Extensions.swift */,
-				D740B6001FCE035400A228EF /* Reach.swift */,
 				D7A6D2601FD57C8D00B88565 /* LocationConfirmationViewController.swift */,
 				D73BC4681FE941B40082C711 /* OnTheMapClass.swift */,
+				D7D5E12A1FEEF8F80000A1C7 /* Reachability.swift */,
 			);
 			path = OnTheMap;
 			sourceTree = "<group>";
@@ -104,6 +107,7 @@
 		D7D185201FBA1EBF00B59497 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D7D5E1281FEEF2A10000A1C7 /* SystemConfiguration.framework */,
 				D7D185211FBA1EBF00B59497 /* MapKit.framework */,
 			);
 			name = Frameworks;
@@ -186,6 +190,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D7D5E12B1FEEF8F80000A1C7 /* Reachability.swift in Sources */,
 				D7A6D2611FD57C8D00B88565 /* LocationConfirmationViewController.swift in Sources */,
 				D7D185241FBA1FDF00B59497 /* LoginViewController.swift in Sources */,
 				D7D1850D1FBA1E7E00B59497 /* AppDelegate.swift in Sources */,
@@ -196,7 +201,6 @@
 				D790A3E61FBB6A67004D4DF3 /* AddLocationViewController.swift in Sources */,
 				D7D185261FBA56BA00B59497 /* DataStructures.swift in Sources */,
 				D790A3E21FBB1DA9004D4DF3 /* ListTableViewController.swift in Sources */,
-				D740B6011FCE035400A228EF /* Reach.swift in Sources */,
 				D790A3E01FBB1D3F004D4DF3 /* MapViewController.swift in Sources */,
 				D73BC4691FE941B40082C711 /* OnTheMapClass.swift in Sources */,
 			);

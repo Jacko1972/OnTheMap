@@ -12,6 +12,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     var keyBoardHeight: CGFloat = 0
     var activeTextField: UITextField!
+    let reachability = Reachability()!
     
     @IBOutlet var loginButton: UIButton!
     @IBOutlet var username: UITextField!
@@ -54,9 +55,9 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     }
     
     @objc func networkStatusChanged(_ notification: Notification) {
-        let status = Reach().connectionStatus()
-        switch status {
-        case .offline, .unknown:
+        let reachability = notification.object as! Reachability
+        switch reachability.connection {
+        case .none:
             allowInternetActions(false)
         default:
             allowInternetActions(true)
@@ -70,19 +71,24 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         subscribeToNotifications()
-        Reach().monitorReachabilityChanges()
     }
     
     func subscribeToNotifications() {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: .UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: .UIKeyboardWillHide, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(networkStatusChanged(_:)), name: NSNotification.Name(rawValue: ReachabilityStatusChangedNotification), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(networkStatusChanged(_:)), name: .reachabilityChanged, object: reachability)
+        do {
+            try reachability.startNotifier()
+        } catch {
+            print("could not start reachability notifier")
+        }
     }
     
     func unsubscribeFromNotifications() {
         NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillShow, object: nil)
         NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillHide, object: nil)
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: ReachabilityStatusChangedNotification), object: nil)
+        reachability.stopNotifier()
+        NotificationCenter.default.removeObserver(self, name: .reachabilityChanged, object: reachability)
     }
     
     @objc func keyboardWillShow(_ notification: Notification) {
