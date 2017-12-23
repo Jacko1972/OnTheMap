@@ -99,7 +99,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     }
     
     func moveKeyboard() {
-        var viewFrame: CGRect = self.view.frame // Window Frame
+        var viewFrame: CGRect = self.view.frame // Window Frame as CGRect
         var activeField: CGPoint = activeTextField.frame.origin // Active Text Field origin
         activeField.y += activeTextField.frame.size.height // Move point to bottom of Active Text Field
         viewFrame.size.height -= keyBoardHeight // Remove Keyboard portion of Window Frame
@@ -143,3 +143,4 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         unsubscribeFromNotifications()
     }
 }
+
