@@ -21,8 +21,12 @@ class LocationConfirmationViewController: UIViewController, MKMapViewDelegate, C
     
     @IBAction func finishAction(_ sender: UIButton) {
         
-        guard let mapItem = mapItem else {
-            displayAlert(title: "Missing Map Item", msg: "Map Item not stored to pass to Udacity API!")
+        guard let name = mapItem?.name else {
+            displayAlert(title: "Missing Map Name", msg: "Name not stored to pass to Udacity API!")
+            return
+        }
+        guard let latitude = mapItem?.placemark.coordinate.latitude, let longitude = mapItem?.placemark.coordinate.longitude else {
+            displayAlert(title: "Information Missing", msg: "No Location coordinates stored to pass to Udacity API!")
             return
         }
         guard let link = link else {
@@ -33,17 +37,13 @@ class LocationConfirmationViewController: UIViewController, MKMapViewDelegate, C
             displayAlert(title: "Missing Information", msg: "Missing Unique Key for information!")
             return
         }
-        guard let student = OnTheMapClass.sharedInstance.studentPublicInformation else {
-            displayAlert(title: "Missing Information", msg: "Missing Public Information Object")
+        guard let first_name = OnTheMapClass.sharedInstance.studentPublicInformation?.first_name, let last_name = OnTheMapClass.sharedInstance.studentPublicInformation?.last_name else {
+            displayAlert(title: "Missing Information", msg: "Missing First and Last Name from Personal Information Object!")
             return
         }
-        let locationInfo = LocationInformation(uniqueKey: key,
-                                               firstName: student.first_name!,
-                                               lastName: student.last_name!,
-                                               mapString: mapItem.name!,
-                                               mediaURL: link,
-                                               latitude: mapItem.placemark.coordinate.latitude,
-                                               longitude: mapItem.placemark.coordinate.longitude)
+        
+        let locationInfo = LocationInformation(uniqueKey: key, firstName: first_name, lastName: last_name, mapString: name,
+                                               mediaURL: link, latitude: latitude, longitude: longitude)
         toggleActivityIndicator(true)
         OnTheMapClient.instance.sendInformationToUdacityApi(locationInfo) { (response, error) in
             if error != nil {
