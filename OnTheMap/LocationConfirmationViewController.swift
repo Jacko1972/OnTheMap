@@ -38,7 +38,7 @@ class LocationConfirmationViewController: UIViewController, MKMapViewDelegate, C
             return
         }
         guard let first_name = OnTheMapClass.sharedInstance.studentPublicInformation?.first_name, let last_name = OnTheMapClass.sharedInstance.studentPublicInformation?.last_name else {
-            displayAlert(title: "Missing Information", msg: "Missing First and Last Name from Personal Information Object!")
+            displayAlert(title: "Missing Information", msg: "Missing First or Last Name from Personal Information Object!")
             return
         }
         
